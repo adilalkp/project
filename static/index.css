@@ -287,10 +287,7 @@ a:focus {
 /*---------------------------------------------
 	02.0 Banner Style
 ---------------------------------------------*/
-.banner-1-bg {
-  background: url(../images/bg/banner-1-bg.jpg) no-repeat bottom left;
-  background-size: cover;
-}
+
 
 .banner-1 .banner-content {
   padding: 250px 0 270px;
@@ -312,12 +309,7 @@ a:focus {
   position: relative;
 }
 
-.banner-1 .banner-content p:before {
-  position: absolute;
-  content: url(../images/curv-arrow-2.png);
-  top: 100%;
-  left: 190px;
-}
+
 
 .banner-1 .banner-content .button {
   background: rgba(255, 255, 255, 0.15);
@@ -333,10 +325,7 @@ a:focus {
   color: #21a2b5;
 }
 
-.banner-2-bg {
-  background: url(../images/bg/banner-2-bg.jpg) no-repeat bottom left;
-  background-size: cover;
-}
+
 
 .banner-2 .banner-content {
   padding: 215px 0 170px;
@@ -384,10 +373,6 @@ a:focus {
   color: #6f7484;
 }
 
-.banner-3-bg {
-  background: url(../images/bg/banner-3-bg.jpg) no-repeat center left;
-  background-size: cover;
-}
 
 .banner-3 .banner-content {
   padding: 70px 0 190px;
@@ -409,12 +394,6 @@ a:focus {
   position: relative;
 }
 
-.banner-3 .banner-content p:before {
-  position: absolute;
-  content: url(../images/curv-arrow.png);
-  top: 100%;
-  left: 190px;
-}
 
 .banner-3 .banner-content .button {
   background: #21a2b5;
@@ -429,11 +408,6 @@ a:focus {
 .banner-3 .banner-content .button:hover {
   color: #ffffff;
   background: #21a2b5;
-}
-
-.banner-4-bg {
-  background: url(../images/bg/banner-4-bg.jpg) no-repeat center;
-  background-size: cover;
 }
 
 .banner-4 .banner-content {
@@ -4846,10 +4820,6 @@ a:focus {
 /*---------------------------------------------
 	09.0 App Style
 ---------------------------------------------*/
-.app-download-bg {
-  background: url(../images/bg/app-bg.jpg) no-repeat left;
-  background-size: cover;
-}
 
 .app-download h2 {
   font-size: 2.6rem;
@@ -4887,13 +4857,6 @@ a:focus {
   border-color: #ffffff;
 }
 
-.app-download .app-download-button .apple-app:before {
-  content: url(../images/apple-white.png);
-}
-
-.app-download .app-download-button .android-app:before {
-  content: url(../images/google-white.png);
-}
 
 /*---------------------------------------------
     10.0 Form Style
@@ -6462,10 +6425,6 @@ header .absolute-nav {
 /*---------------------------------------------
 	13.0 Animated-number Style
 ---------------------------------------------*/
-.fact-bg {
-  background: url(../images/bg/fact-bg.jpg) no-repeat center center;
-  background-size: cover;
-}
 
 .fact {
   text-align: center;
@@ -6561,10 +6520,7 @@ header .absolute-nav {
   color: #21a2b5;
 }
 
-.call-to-action-bg {
-  background: url(../images/bg/cta-2-bg.jpg) no-repeat center;
-  background-size: cover;
-}
+
 
 .call-to-action-2 {
   display: -webkit-box;
@@ -6623,10 +6579,6 @@ header .absolute-nav {
   color: #ffffff;
 }
 
-.newsletter-bg {
-  background: url(../images/bg/newsletter-bg.jpg) no-repeat center center;
-  background-size: cover;
-}
 
 .newsletter-wrap {
   color: #ffffff;
@@ -6997,10 +6949,6 @@ header .absolute-nav {
   display: block;
 }
 
-.package-wrapper .package.professional .package-header {
-  background: url(../images/bg/package-header-bg.jpg) no-repeat center;
-  background-size: cover;
-}
 
 .package-wrapper .package .package-features {
   padding: 40px;
@@ -7378,13 +7326,6 @@ header .absolute-nav {
   border-color: #21a2b5;
 }
 
-.footer-bottom .footer-app-download .apple-app:before {
-  content: url(../images/apple.png);
-}
-
-.footer-bottom .footer-app-download .android-app:before {
-  content: url(../images/google.png);
-}
 
 .footer-bottom .back-to-top {
   text-align: right;
@@ -7905,11 +7846,6 @@ header .absolute-nav {
   box-shadow: 0px 5px 20px 0px rgba(0, 0, 0, 0.03);
 }
 
-.about-company {
-  padding: 60px 30px;
-  background: url(../images/bg/bg-map.jpg) no-repeat center;
-  background-size: cover;
-}
 
 .feature-content h3 {
   font-family: "Poppins", sans-serif;
@@ -8010,7 +7946,7 @@ header .absolute-nav {
 
 .working-process:before {
   position: absolute;
-  content: url(../images/dot.png);
+  content: url("images/dot.png");
   top: 35px;
   left: 13px;
 }
