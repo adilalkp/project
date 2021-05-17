@@ -7,5 +7,22 @@
 </head>
 <body>
     <h1>DASHBOARD</h1>
+<form action="{% url 'basic_app:dashboard' %}" method="POST" enctype="multipart/form-data">
+{% csrf_token %}
+<input required type="file" multiple name="images" id="images" accept="image/*">
+<input type="submit" value="upload" name="" id="">
+
+</form>
+
+<h3>Plates list</h3>
+<ul>
+
+{% for plate in plates %}
+    <li>
+        {{plate}}
+    </li>
+    {% endfor %}
+</ul>
+
 </body>
 </html>

@@ -1,4 +1,5 @@
 media
+imagesfolder
 db.sqlite3
 staticfiles
 **/migrations
