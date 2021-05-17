@@ -1,4 +1,5 @@
 media
+db.sqlite3
 staticfiles
 **/migrations
 *.DS_Store
