@@ -55,6 +55,7 @@
                 <h5><i class="las la-sign-in-alt"></i>Login</h5>
               </div>
               <form action="{% url 'basic_app:index' %}" method="POST">
+                {% csrf_token %}
                 {% if messages %}
                 {% for message in messages %}
               <div class="alert alert-danger margin-login-register" role = "alert">
@@ -67,7 +68,8 @@
                 </div>
                 <div class="form-group">
                   {{form.password}}
-                </div>
+                </div>     
+
                 <!-- <div class="more-option">
                   <div class="mt-0 terms">
                     <input class="custom-radio" type="checkbox" id="radio-4" name="termsandcondition">
@@ -79,6 +81,8 @@
                 </div> -->
                 <input type="submit" value="Submit" class="button primary-bg btn-block">
               </form>
+
+
             </div>
           </div>
         </div>
