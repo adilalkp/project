@@ -9,6 +9,7 @@ def index(request):
     if request.method=='GET':
         return render(request, 'index.html', {'form':form})
     else:
+        form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
@@ -16,7 +17,6 @@ def index(request):
             if user is not None:
                 login(request, user)
                 return redirect('basic_app:dashboard')
-        
         messages.error(request, "Invalid username or password")
         return redirect('basic_app:index')
 
