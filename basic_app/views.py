@@ -112,7 +112,7 @@ def dashboard(request):
         model.load_weights(BASE_DIR / "basic_app/ml/recognition.h5")
         labels = LabelEncoder()
         labels.classes_ = np.load(BASE_DIR / 'basic_app/ml/license_character_classes.npy')
-        image_paths = glob.glob("media/imagesfolder/*.jpeg")
+        image_paths = glob.glob("media/imagesfolder/*.jpg")
         for i in range(len(image_paths)):
             try:
                 LpImg,_ = get_plate(image_paths[i], wpod_net)
