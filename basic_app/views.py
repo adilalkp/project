@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib import messages
 from time import sleep
+
+from numpy.lib.arraysetops import ediff1d
 from .forms import LoginForm
 from .models import Image
 from pathlib import Path
@@ -32,7 +34,7 @@ def load_model(path):
         with open('%s.json' % path, 'r') as json_file:
             model_json = json_file.read()
         model = model_from_json(model_json, custom_objects={})
-        model.load_weights('%s.h5' % path)
+        model.load_weights('%s.h5' % path)       
         return model
     except Exception as e:
         print(e)
@@ -44,7 +46,7 @@ def preprocess_image(image_path,resize=False):
     if resize:
         img = cv2.resize(img, (224,224))
     return img
-def get_plate(image_path, wpod_net, Dmax=608, Dmin=280,):
+def get_plate(image_path, wpod_net, Dmax=608, Dmin=280):
     vehicle = preprocess_image(image_path)
     ratio = float(max(vehicle.shape[:2])) / min(vehicle.shape[:2])
     side = int(ratio * Dmin)
@@ -62,14 +64,19 @@ def predict_from_model(image,model,labels):
     image = np.stack((image,)*3, axis=-1)
     prediction = labels.inverse_transform([np.argmax(model.predict(image[np.newaxis,:]))])
     return prediction
-
+def get_plate(image_path, wpod_net, Dmax=608, Dmin=280):
+    vehicle = preprocess_image(image_path)
+    ratio = float(max(vehicle.shape[:2])) / min(vehicle.shape[:2])
+    side = int(ratio * Dmin)
+    bound_dim = min(side, Dmax)
+    _ , LpImg, _, cor = detect_lp(wpod_net, vehicle, bound_dim, lp_threshold=0.5)
+    return LpImg, cor
 def sort_contours(cnts,reverse = False):
     i = 0
     boundingBoxes = [cv2.boundingRect(c) for c in cnts]
     (cnts, boundingBoxes) = zip(*sorted(zip(cnts, boundingBoxes),
                                         key=lambda b: b[1][i], reverse=reverse))
     return cnts
-
 
 
 
@@ -96,28 +103,36 @@ def index(request):
 
 def dashboard(request):
     if request.method=="GET":
-        return render(request, 'dashboard.html')
+        POST = 0
+        return render(request, 'dashboard.html', {'post':POST})
     else:
+        POST = 1 # for get post differentiation in template for conditional rendering
         images = request.FILES.getlist('images')
         for image in images:
             imgobj = Image.objects.create(imagefile=image)        
         #ml portion starts
+
+
+
+
+
         plates_list = []
         wpod_net_path = BASE_DIR / "basic_app/ml/wpod-net.json"
         wpod_net = load_model(wpod_net_path)
-        json_file = open( BASE_DIR / 'basic_app/ml/MobileNets_character_recognition.json', 'r')
+        json_file = open( BASE_DIR / 'basic_app/ml/model_char_recognitionorgnew.json', 'r')
         loaded_model_json = json_file.read()
         json_file.close()
-        model = model_from_json(loaded_model_json)
-        model.load_weights(BASE_DIR / "basic_app/ml/recognition.h5")
+
+        loaded_model = model_from_json(loaded_model_json)
+        loaded_model.load_weights(BASE_DIR / "basic_app/ml/model_char_recognitionorgnew.h5")
         labels = LabelEncoder()
         labels.classes_ = np.load(BASE_DIR / 'basic_app/ml/license_character_classes.npy')
-        image_paths = glob.glob("media/imagesfolder/*.jpg")
+        image_paths = glob.glob("media/imagesfolder/*")
+        program_crashed = 0
         for i in range(len(image_paths)):
             try:
                 LpImg,_ = get_plate(image_paths[i], wpod_net)
-                if (len(LpImg)):
-                    plate_image = cv2.convertScaleAbs(LpImg[0], alpha=(255.0))
+                for k in range(len(LpImg)):
                     plate_image = cv2.convertScaleAbs(LpImg[0], alpha=(255.0))
                     gray = cv2.cvtColor(plate_image, cv2.COLOR_BGR2GRAY)
                     blur = cv2.GaussianBlur(gray,(7,7),0)
@@ -141,17 +156,20 @@ def dashboard(request):
                                 crop_characters.append(curr_num)
                         final_string = ''
                         for j,character in enumerate(crop_characters):
-                            title = np.array2string(predict_from_model(character,model,labels))
+                            title = np.array2string(predict_from_model(character,loaded_model,labels))
                             final_string+=title.strip("'[]")
-                    plates_list.append(final_string)
-                else:
-                    print(0)
+                    
+                    if(len(final_string)==0):
+                        plates_list.append("Unrecognizable") 
+                    else:          
+                        plates_list.append(final_string)
             except Exception as e:
-                plates_list.append("No plate")
+                print(e)
+                program_crashed = 1
 
         #ml portion ends
         Image.objects.all().delete()
-        return render(request, 'dashboard.html', {'plates':plates_list})
+        return render(request, 'dashboard.html', {'plates':plates_list, 'crashed':program_crashed, 'post':POST})
 
 
 
