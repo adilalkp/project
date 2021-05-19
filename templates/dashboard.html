@@ -13,7 +13,10 @@
 <input type="submit" value="upload" name="" id="">
 
 </form>
-
+{% if post %}
+{% if crashed %}
+<h2>PROGRAM CRASHED AT PLATE DETECTION</h2>
+{% else %}
 <h3>Plates list</h3>
 <ul>
 
@@ -23,6 +26,8 @@
     </li>
     {% endfor %}
 </ul>
+{% endif %}
+{% endif %}
 
 </body>
 </html>
