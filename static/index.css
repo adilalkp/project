@@ -46,7 +46,7 @@
 	1.0 General Style
 -----------------------------------------------*/
 html {
-  font-size: 62.5%;
+  font-size: 70%;
 }
 
 body {
@@ -1216,35 +1216,7 @@ a:focus {
   color: #6e75d0;
 }
 
-.job-filter-wrapper .job-filter.job-type ul .freelance svg, .candidate-filter-wrapper .job-filter.job-type ul .freelance svg, .employer-filter-wrapper .job-filter.job-type ul .freelance svg, .job-filter-wrapper .job-type.candidate-filter ul .freelance svg, .candidate-filter-wrapper .job-type.candidate-filter ul .freelance svg, .employer-filter-wrapper .job-type.candidate-filter ul .freelance svg, .job-filter-wrapper .candidate-filter.candidate-type ul .freelance svg, .candidate-filter-wrapper .candidate-filter.candidate-type ul .freelance svg, .employer-filter-wrapper .candidate-filter.candidate-type ul .freelance svg, .job-filter-wrapper .candidate-filter.employer-type ul .freelance svg, .candidate-filter-wrapper .candidate-filter.employer-type ul .freelance svg, .employer-filter-wrapper .candidate-filter.employer-type ul .freelance svg, .job-filter-wrapper .job-filter.candidate-type ul .freelance svg, .candidate-filter-wrapper .job-filter.candidate-type ul .freelance svg, .employer-filter-wrapper .job-filter.candidate-type ul .freelance svg, .job-filter-wrapper .candidate-type.employer-filter ul .freelance svg, .candidate-filter-wrapper .candidate-type.employer-filter ul .freelance svg, .employer-filter-wrapper .candidate-type.employer-filter ul .freelance svg, .job-filter-wrapper .job-type.employer-filter ul .freelance svg, .candidate-filter-wrapper .job-type.employer-filter ul .freelance svg, .employer-filter-wrapper .job-type.employer-filter ul .freelance svg, .job-filter-wrapper .employer-filter.employer-type ul .freelance svg, .candidate-filter-wrapper .employer-filter.employer-type ul .freelance svg, .employer-filter-wrapper .employer-filter.employer-type ul .freelance svg, .job-filter-wrapper .job-filter.employer-type ul .freelance svg, .candidate-filter-wrapper .job-filter.employer-type ul .freelance svg, .employer-filter-wrapper .job-filter.employer-type ul .freelance svg {
-  color: #82d219;
-}
-
-.job-filter-wrapper .job-filter.job-type ul .temporary svg, .candidate-filter-wrapper .job-filter.job-type ul .temporary svg, .employer-filter-wrapper .job-filter.job-type ul .temporary svg, .job-filter-wrapper .job-type.candidate-filter ul .temporary svg, .candidate-filter-wrapper .job-type.candidate-filter ul .temporary svg, .employer-filter-wrapper .job-type.candidate-filter ul .temporary svg, .job-filter-wrapper .candidate-filter.candidate-type ul .temporary svg, .candidate-filter-wrapper .candidate-filter.candidate-type ul .temporary svg, .employer-filter-wrapper .candidate-filter.candidate-type ul .temporary svg, .job-filter-wrapper .candidate-filter.employer-type ul .temporary svg, .candidate-filter-wrapper .candidate-filter.employer-type ul .temporary svg, .employer-filter-wrapper .candidate-filter.employer-type ul .temporary svg, .job-filter-wrapper .job-filter.candidate-type ul .temporary svg, .candidate-filter-wrapper .job-filter.candidate-type ul .temporary svg, .employer-filter-wrapper .job-filter.candidate-type ul .temporary svg, .job-filter-wrapper .candidate-type.employer-filter ul .temporary svg, .candidate-filter-wrapper .candidate-type.employer-filter ul .temporary svg, .employer-filter-wrapper .candidate-type.employer-filter ul .temporary svg, .job-filter-wrapper .job-type.employer-filter ul .temporary svg, .candidate-filter-wrapper .job-type.employer-filter ul .temporary svg, .employer-filter-wrapper .job-type.employer-filter ul .temporary svg, .job-filter-wrapper .employer-filter.employer-type ul .temporary svg, .candidate-filter-wrapper .employer-filter.employer-type ul .temporary svg, .employer-filter-wrapper .employer-filter.employer-type ul .temporary svg, .job-filter-wrapper .job-filter.employer-type ul .temporary svg, .candidate-filter-wrapper .job-filter.employer-type ul .temporary svg, .employer-filter-wrapper .job-filter.employer-type ul .temporary svg {
-  color: #ff5377;
-}
-
-.job-filter-wrapper .job-filter .nstSlider, .candidate-filter-wrapper .job-filter .nstSlider, .employer-filter-wrapper .job-filter .nstSlider, .job-filter-wrapper .candidate-filter .nstSlider, .candidate-filter-wrapper .candidate-filter .nstSlider, .employer-filter-wrapper .candidate-filter .nstSlider, .job-filter-wrapper .employer-filter .nstSlider, .candidate-filter-wrapper .employer-filter .nstSlider, .employer-filter-wrapper .employer-filter .nstSlider {
-  width: 100%;
-  height: 3px;
-  margin: 20px 0 37px;
-  background: #e3e3e3;
-  cursor: auto;
-}
-
-.job-filter-wrapper .job-filter .nstSlider .bar, .candidate-filter-wrapper .job-filter .nstSlider .bar, .employer-filter-wrapper .job-filter .nstSlider .bar, .job-filter-wrapper .candidate-filter .nstSlider .bar, .candidate-filter-wrapper .candidate-filter .nstSlider .bar, .employer-filter-wrapper .candidate-filter .nstSlider .bar, .job-filter-wrapper .employer-filter .nstSlider .bar, .candidate-filter-wrapper .employer-filter .nstSlider .bar, .employer-filter-wrapper .employer-filter .nstSlider .bar {
-  height: 3px;
-  top: 0;
-  min-width: 0;
-  background: #21a2b5;
-}
-
-.job-filter-wrapper .job-filter .nstSlider .leftGrip, .candidate-filter-wrapper .job-filter .nstSlider .leftGrip, .employer-filter-wrapper .job-filter .nstSlider .leftGrip, .job-filter-wrapper .candidate-filter .nstSlider .leftGrip, .candidate-filter-wrapper .candidate-filter .nstSlider .leftGrip, .employer-filter-wrapper .candidate-filter .nstSlider .leftGrip, .job-filter-wrapper .employer-filter .nstSlider .leftGrip, .candidate-filter-wrapper .employer-filter .nstSlider .leftGrip, .employer-filter-wrapper .employer-filter .nstSlider .leftGrip,
-.job-filter-wrapper .job-filter .nstSlider .rightGrip,
-.candidate-filter-wrapper .job-filter .nstSlider .rightGrip,
-.employer-filter-wrapper .job-filter .nstSlider .rightGrip,
-.job-filter-wrapper .candidate-filter .nstSlider .rightGrip,
-.candidate-filter-wrapper .candidate-filter .nstSlider .rightGrip,
+.job-filter-wrapper .job-filter.job-type ul .freelance svg, .candidate-filter-wrapper .job-filter.job-type ul .freelance svg, .employer-filter-wrapper .job-filter.job-type ul .freelance svg, .job-filter-wrapper .job-type.candidate-filter ul .freelance svg, .candidate-filter-wrapper .job-type.candidate-filter ul .freelance svg, .employer-filter-wrapper .job-type.candidate-filter ul .freelance svg, .job-filter-wrapper .candidate-filter.candidate-type ul .freelance svg, .candidate-filter-wrapper .candidate-filter.candidate-type ul .freelance svg, .employer-filter-wrapper .candidate-filter.candidate-type ul .freelance svg, .job-filter-wrapper .candidate-filter.employer-type ul .freelance svg, .candidate-filter-wrapper .candidate-filter.employer-type ul .freelance svg, .employer-filter-wrapper .candidate-filter.employer-type ul .freelance svg, .job-filter-wrapper .job-filter.candidate-type ul .freelance svg, .candidate-filter-wrapper .job-filter.candidate-type ul .freelance svg, .employer-filter-wrapper .job-filter.candidate-type ul .freelance svg, .job-filter-wrapper .candidate-type.employer-filter ul .freelance svg, .candidate-filter-wrapper .candidate-type.employer-filter ul .freelance svg, .employer-filter-wrapper .candidate-type.employer-filter ul .freelance svg, .job-filter-wrapper .job-type.employer-filter ul .freelance svg, .candidate-filter-wrapper .job-type.employer-filter ul .freelance svg, .employer-filter-wrapper .job-type.employer-filter ul .freelance svg, .job-filter-wrapper .employer-filter.employer-type ul .freelance svg, .candidate-filter-wrapper .employer-filter.employer-type ul .freelance svg, .employer-filter-wrapper .employer-filter.employer-type ul .freelance svg, .                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                te-filter-wrapper .candidate-filter .nstSlider .rightGrip,
 .employer-filter-wrapper .candidate-filter .nstSlider .rightGrip,
 .job-filter-wrapper .employer-filter .nstSlider .rightGrip,
 .candidate-filter-wrapper .employer-filter .nstSlider .rightGrip,
@@ -10097,11 +10069,45 @@ input[type="text" i]:focus,input[type="password"]:focus {
     border: 2px solid #21a2b5;
 }
 
-.logo-area a {
-	font-size: 1.5em;
+.logo-area a, .navbar-brand {
+	font-size: 1.5em !important;
 	color: #21a2b5 !important;
+	font-family: "Poppins", sans-serif;
 }
 
 .padding-top-150{
 	padding-top: 150px;
+}
+
+.bg-light{
+	background: #fff !important;
+}
+.pl-5{
+	padding-left: 2rem;
+}
+}
+.pr-5{
+	padding-right: 2rem;
+}
+
+.logout-btn{
+	font-family: "Poppins", sans-serif;
+	font-size: 1.5rem !important;
+	border: 2px solid #21a2b5 !important;
+	padding: 5px 20px 5px 20px !important;
+	border-radius: 3px;
+	color: #21a2b5 !important;
+	}
+
+	.logout-btn:hover{
+		color: #fff !important;
+		background: #21a2b5 !important;
+	}
+
+.btn{
+	font-size: 1.4rem !important;
+}
+
+.container{
+	max-width: 100%;
 }
