@@ -39,6 +39,7 @@ def load_model(path):
     except Exception as e:
         print(e)
 
+
 def preprocess_image(image_path,resize=False):
     img = cv2.imread(image_path)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -100,6 +101,11 @@ def index(request):
                 return redirect('basic_app:dashboard')
         messages.error(request, "Invalid username or password")
         return redirect('basic_app:index')
+
+def logout_view(request):
+    logout(request)
+    return redirect('basic_app:index')
+
 
 def dashboard(request):
     if request.method=="GET":

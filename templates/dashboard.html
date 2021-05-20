@@ -42,7 +42,7 @@
         </a>
 
             <div class="navbar-nav ml-auto pr-5">
-                <a href="#" class="nav-item nav-link logout-btn">Logout</a>
+                <a href="{% url 'basic_app:logout' %}" class="nav-item nav-link logout-btn">Logout</a>
         </div>
     </nav>
 
@@ -76,21 +76,23 @@
                 </div>
                 {% else %}
 
-                                
-              <table class="table table-bordered">
-                <thead>
-                  <tr>
-                    <th scope="col">License Plates List</th>
-                  </tr>
-                </thead>
-                <tbody>
-                    {% for plate in plates %}
+                <table class="table table-bordered table-striped">
+                    <thead>
+                      <tr>
+                        <th scope="col">License Plates List</th>
 
-                  <tr>
-                    <th scope="row">{{plate}}</th>
-                  </tr>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for plate in plates %}
 
-                  {% endfor %}
+                      <tr>
+                        <td scope="row">{{plate}}</td>
+
+                      </tr>
+                      {% endfor %}
+
+
                 </tbody>
 
               </table>
@@ -99,6 +101,7 @@
                 {% endif %}
 
 
+ 
               <!-- <div class="information">
                 <h4>License Plates</h4>
                 <ul>
