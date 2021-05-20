@@ -52,31 +52,52 @@
           <div class="col">
             <div class="blog-post-wrapper">
               <div class="col-xl-12 col-lg-4">
+                <form action="{% url 'basic_app:dashboard' %}" method="POST" enctype="multipart/form-data">
+
                 <div class="input-group mb-2">
-                  <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="inputGroupFile04">
-                    <label class="custom-file-label" for="inputGroupFile04">Choose file (File should be in mp4 format, max size 100MB)</label>
+
+                        {% csrf_token %}
+                        <div class="custom-file">
+                        <input required type="file" class="custom-file-input" multiple name="images" id="inputGroupFile04" accept="image/*">                        
+                    <label class="custom-file-label" for="inputGroupFile04">Select images (max size 10MB)</label>
                   </div>
                   <div class="input-group-append">
-                    <button class="btn btn-outline-primary" type="button">Upload</button>
+                    <button class="btn btn-outline-primary" type="submit">Upload</button>
                   </div>
+
+                </form>
+
                 </div>
 
+                {% if post %}
+                {% if crashed %}
+                <div class="alert alert-danger" role="alert">
+                    PROGRAM CRASHED AT PLATE DETECTION
+                </div>
+                {% else %}
+
+                                
               <table class="table table-bordered">
                 <thead>
                   <tr>
-                    <th scope="col">Plates List</th>
+                    <th scope="col">License Plates List</th>
                   </tr>
                 </thead>
                 <tbody>
+                    {% for plate in plates %}
+
                   <tr>
-                    <th scope="row">1</th>
+                    <th scope="row">{{plate}}</th>
                   </tr>
-                  <tr>
-                    <th scope="row">1</th>
-                  </tr>
+
+                  {% endfor %}
                 </tbody>
+
               </table>
+
+                {% endif %}
+                {% endif %}
+
 
               <!-- <div class="information">
                 <h4>License Plates</h4>
@@ -204,12 +225,7 @@
 </head>
 <body>
     <h1>DASHBOARD</h1>
-<form action="{% url 'basic_app:dashboard' %}" method="POST" enctype="multipart/form-data">
-{% csrf_token %}
-<input required type="file" multiple name="images" id="images" accept="image/*">
-<input type="submit" value="upload" name="" id="">
 
-</form>
 {% if post %}
 {% if crashed %}
 <h2>PROGRAM CRASHED AT PLATE DETECTION</h2>
