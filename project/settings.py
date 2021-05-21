@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-)po%g^)1vd$3dkw&jyj17wsulhys$x(!zz^*%n@2+ijq38q78('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -80,8 +80,8 @@ WSGI_APPLICATION = 'project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'newdb1',
-        'USER': 'newuser',
+        'NAME': 'test',
+        'USER': 'test',
         'PASSWORD': 'toor',
         'HOST': 'localhost',
         'PORT': '',
