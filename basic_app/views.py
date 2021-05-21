@@ -7,11 +7,12 @@ from time import sleep
 from .forms import LoginForm
 from .models import Image
 from pathlib import Path
+import uuid
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-#ml imports
+# #ml imports
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
@@ -112,9 +113,12 @@ def dashboard(request):
         POST = 0
         return render(request, 'dashboard.html', {'post':POST})
     else:
+        username = str(request.user)
         POST = 1 # for get post differentiation in template for conditional rendering
         images = request.FILES.getlist('images')
         for image in images:
+            file_name = username + str(uuid.uuid4()) + ".jpg"
+            image._name = file_name
             imgobj = Image.objects.create(imagefile=image)        
         #ml portion starts
 
@@ -133,7 +137,7 @@ def dashboard(request):
         loaded_model.load_weights(BASE_DIR / "basic_app/ml/model_char_recognitionorgnew.h5")
         labels = LabelEncoder()
         labels.classes_ = np.load(BASE_DIR / 'basic_app/ml/license_character_classes.npy')
-        image_paths = glob.glob("media/imagesfolder/*")
+        image_paths = glob.glob("media/imagesfolder/" + username + "*")
         program_crashed = 0
         for i in range(len(image_paths)):
             try:
@@ -173,8 +177,9 @@ def dashboard(request):
                 print(e)
                 program_crashed = 1
 
-        #ml portion ends
-        Image.objects.all().delete()
+        # ml portion ends
+        images_list = Image.objects.filter(user=request.user)
+        images_list.delete()
         return render(request, 'dashboard.html', {'plates':plates_list, 'crashed':program_crashed, 'post':POST})
 
 
