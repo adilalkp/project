@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib import messages
 from time import sleep
+from django.contrib.auth.models import User
 
 # from numpy.lib.arraysetops import ediff1d
 from .forms import LoginForm
@@ -107,7 +110,7 @@ def logout_view(request):
     logout(request)
     return redirect('basic_app:index')
 
-
+@login_required(login_url="basic_app:index")
 def dashboard(request):
     if request.method=="GET":
         POST = 0
@@ -119,7 +122,8 @@ def dashboard(request):
         for image in images:
             file_name = username + str(uuid.uuid4()) + ".jpg"
             image._name = file_name
-            imgobj = Image.objects.create(imagefile=image)        
+            imgobj = Image(owner=username, imagefile=image)
+            imgobj.save()        
         #ml portion starts
 
 
@@ -137,7 +141,7 @@ def dashboard(request):
         loaded_model.load_weights(BASE_DIR / "basic_app/ml/model_char_recognitionorgnew.h5")
         labels = LabelEncoder()
         labels.classes_ = np.load(BASE_DIR / 'basic_app/ml/license_character_classes.npy')
-        image_paths = glob.glob("media/imagesfolder/*")
+        image_paths = glob.glob("media/imagesfolder/"+ username + "*.jpg")
         program_crashed = 0
         for i in range(len(image_paths)):
             try:
@@ -178,7 +182,7 @@ def dashboard(request):
                 program_crashed = 1
 
         # ml portion ends
-        Image.objects.all().delete()
+        Image.objects.filter(owner=username).delete()
         return render(request, 'dashboard.html', {'plates':plates_list, 'crashed':program_crashed, 'post':POST})
 
 
