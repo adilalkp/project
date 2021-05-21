@@ -6,6 +6,6 @@ from django.db.models import (CharField, DateField, DecimalField, EmailField,
                               OneToOneField, PositiveSmallIntegerField, DateTimeField)
 # Create your models here.
 class Image(models.Model):
-  #  owner = OneToOneField(User, on_delete=models.CASCADE, blank=True, null=True)
+    owner = CharField(blank=True,max_length=100)
     imagefile = ImageField(upload_to='imagesfolder', null=True, blank=True)
     
