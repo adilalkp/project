@@ -137,7 +137,7 @@ def dashboard(request):
         loaded_model.load_weights(BASE_DIR / "basic_app/ml/model_char_recognitionorgnew.h5")
         labels = LabelEncoder()
         labels.classes_ = np.load(BASE_DIR / 'basic_app/ml/license_character_classes.npy')
-        image_paths = glob.glob("media/imagesfolder/" + username + "*")
+        image_paths = glob.glob("media/imagesfolder/*")
         program_crashed = 0
         for i in range(len(image_paths)):
             try:
@@ -178,8 +178,7 @@ def dashboard(request):
                 program_crashed = 1
 
         # ml portion ends
-        images_list = Image.objects.filter(user=request.user)
-        images_list.delete()
+        Image.objects.all().delete()
         return render(request, 'dashboard.html', {'plates':plates_list, 'crashed':program_crashed, 'post':POST})
 
 
