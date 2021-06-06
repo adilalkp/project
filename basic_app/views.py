@@ -53,7 +53,7 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     if request.method=="GET":
-        return render(request, 'dashboardnew.html')
+        return render(request, 'dashboard.html')
     else:
          username = str(request.user)
          video = request.FILES.get('video')
@@ -72,31 +72,19 @@ def dashboard(request):
 
          #run
          run_job.delay(username, job_code, domain, user_email)
-         return render(request, 'dashboardnew.html')
+         return render(request, 'dashboard.html')
 
 
 
 def list_jobs(request):
     username = str(request.user)
     jobs = Job.objects.filter(owner=username)
-
-    return render(request, 'jobs_list.html', {'joblist':jobs, 'username':username})
+    return render(request, 'jobs.html', {'joblist':jobs, 'username':username})
 
 def individual_job(request, job_code):
     vehi_records = VehicleRecord.objects.filter(job_code=job_code)
-    return render(request, 'indi_job.html', {'vehicle_records':vehi_records})
+    nums = len(vehi_records)
+    return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums})
 
 
 # for styling
-
-def testdashboard(request): #url 'dash'
-    return render(request, 'dashboard.html')
-
-def base(request): #url 'base'
-    return render(request, 'base.html')
-
-def jobs(request): #url 'jobs'
-    return render(request, 'jobs.html')
-
-def job(request): #url 'job'
-    return render(request, 'job.html')

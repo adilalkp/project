@@ -45,11 +45,11 @@
 
                           </div>
                           <div class="showing-number">
-                            <span>Showing Records</span>
+                            <span>Showing {{nums}} Records</span>
                           </div>
                         </div>
 
-
+                        {% for vehicle in vehicle_records %}
                         <div class="candidate">
                           <div class="thumb">
                             <a href="#">
@@ -58,30 +58,32 @@
                           </div>
                           <div class="body">
                             <div class="content">
-                              <h4><a href="candidate-details.html">Vehicle License Plate</a></h4>
+                              <h4><a href="candidate-details.html">{{vehicle.license_plate}}</a></h4>
                               <div class="info">
-                                <span class="work-post"><a href="#"><i data-feather="check-square"></i>Type</a></span>
-                                <span class="location"><a href="#"><i data-feather="map-pin"></i>Colour</a></span>
-                                <span class="work-post"><a href="#"><i data-feather="check-square"></i>Logo</a></span>
-                                <span class="location"><a href="#"><i data-feather="map-pin"></i>Model</a></span>
+                                <span class="work-post"><a href="#"><i data-feather="check-square"></i>{{vehicle.vehicle_type}}</a></span>
+                                <span class="location"><a href="#"><i data-feather="map-pin"></i>{{vehicle.colour}}</a></span>
+                                <span class="work-post"><a href="#"><i data-feather="check-square"></i>{{vehicle.vehicle_logo}}</a></span>
+                                <span class="location"><a href="#"><i data-feather="map-pin"></i>{{vehicle.vehicle_model}}</a></span>
                               </div>
                             </div>
                           </div>
                         </div>
 
+                        {% endfor %}
+
 
 
                   </div>
 
-                <div class="dashboard-sidebar">
-                <div class="dashboard-menu">
-                  <ul>
-                    <li><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
-                    <li class="active"><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Jobs List</a></li>
-                    <li><i class="fas fa-briefcase"></i><a href="employer-dashboard-manage-job.html">Logout</a></li>
-                  </ul>
-                </div>
-              </div>
+                  <div class="dashboard-sidebar">
+                    <div class="dashboard-menu">
+                      <ul>
+                        <li><i class="fas fa-home"></i><a href="{% url 'basic_app:dashboard' %}">Dashboard</a></li>
+                        <li class="active"><i class="fas fa-user"></i><a href="{% url 'basic_app:list_jobs' %}">Jobs List</a></li>
+                        <li><i class="fas fa-briefcase"></i><a href="{% url 'basic_app:logout' %}">Logout</a></li>
+                      </ul>
+                    </div>
+                  </div>
 
                   </div>
                 </div>

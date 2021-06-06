@@ -49,9 +49,9 @@
           <div class="dashboard-sidebar">
           <div class="dashboard-menu">
             <ul>
-              <li class="active"><i class="fas fa-home"></i><a href="employer-dashboard.html">Dashboard</a></li>
-              <li><i class="fas fa-user"></i><a href="employer-dashboard-edit-profile.html">Jobs List</a></li>
-              <li><i class="fas fa-briefcase"></i><a href="employer-dashboard-manage-job.html">Logout</a></li>
+              <li class="active"><i class="fas fa-home"></i><a href="{% url 'basic_app:dashboard' %}">Dashboard</a></li>
+              <li><i class="fas fa-user"></i><a href="{% url 'basic_app:list_jobs' %}">Jobs List</a></li>
+              <li><i class="fas fa-briefcase"></i><a href="{% url 'basic_app:logout' %}">Logout</a></li>
             </ul>
           </div>
         </div>
