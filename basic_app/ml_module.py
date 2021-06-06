@@ -148,18 +148,18 @@ def read_plates(username, job_code):
 @shared_task
 def run_job(username, job_code, domain, user_email):
     #first read plates
-    plates_list = read_plates(username, job_code)
-    #call other ml modules
+    # plates_list = read_plates(username, job_code)
+    # #call other ml modules
 
-    #update job in Job
-    # run some loop to iterate through sample cases, here it is list of license plates
-    for plate in plates_list:
-         record = VehicleRecord(job_code=job_code, license_plate=plate, colour="nil", vehicle_type="nil", vehicle_model="nil", vehicle_logo="nil")
-         record.save()
-    job_obj = Job.objects.filter(job_code=job_code).first()
-    job_obj.status = "completed"
-    job_obj.completed_on = timezone.now()
-    job_obj.save()
+    # #update job in Job
+    # # run some loop to iterate through sample cases, here it is list of license plates
+    # for plate in plates_list:
+    #      record = VehicleRecord(job_code=job_code, license_plate=plate, colour="nil", vehicle_type="nil", vehicle_model="nil", vehicle_logo="nil")
+    #      record.save()
+    # job_obj = Job.objects.filter(job_code=job_code).first()
+    # job_obj.status = "completed"
+    # job_obj.completed_on = timezone.now()
+    # job_obj.save()
 
     #send mail to user
     mail_subject = 'Vehicle Recognition Report'
@@ -167,8 +167,8 @@ def run_job(username, job_code, domain, user_email):
     Context = {
         'domain': domain,
         'subheading': "Your vehi-scanner report is ready",
-        # 'content': ['asdas', 'asdasd', '1qwd3', '2wfdcq3w', 'd13fcww'],
-        'content': plates_list,
+        'content': ['asdas', 'asdasd', '1qwd3', '2wfdcq3w', 'd13fcww'],
+        # 'content': plates_list,
         'salutation': "Hi " + str(username) + " ,",
     }
 
@@ -179,9 +179,9 @@ def run_job(username, job_code, domain, user_email):
 
     #clear ml waste(frames, video..)
 
-    job_frames_location = BASE_DIR / "framesimages/{}/{}/".format(username,job_code)
-    shutil.rmtree(job_frames_location)
-    video_obj = Video.objects.filter(job_code=job_code).first()
-    video_obj.delete()
+    # job_frames_location = BASE_DIR / "framesimages/{}/{}/".format(username,job_code)
+    # shutil.rmtree(job_frames_location)
+    # video_obj = Video.objects.filter(job_code=job_code).first()
+    # video_obj.delete()
 
     
