@@ -71,7 +71,7 @@ def dashboard(request):
          user_email = request.user.email
 
          #run
-         run_job.delay(username, job_code, domain, user_email)         
+         run_job(username, job_code, domain, user_email)         
          return render(request, 'dashboardnew.html')
 
 
