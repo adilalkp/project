@@ -1,7 +1,7 @@
 # from .ml_module import run_job
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from celery import shared_task
+#from celery import shared_task
 
 
 from django.contrib.auth import (authenticate, login, logout)
@@ -71,7 +71,7 @@ def dashboard(request):
          user_email = request.user.email
 
          #run
-         run_job.delay(username, job_code, domain, user_email)         
+         run_job.delay(username, job_code, domain, user_email)
          return render(request, 'dashboardnew.html')
 
 
