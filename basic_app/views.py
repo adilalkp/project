@@ -57,12 +57,13 @@ def dashboard(request):
     else:
          username = str(request.user)
          video = request.FILES.get('video')
+         job_name = request.POST.get('job_name')
          job_code = str(uuid.uuid4())
          filename = str(username) + "-" + job_code + ".mp4"
          video._name = filename
          obj = Video(owner=username, videofile=video, job_code=job_code)
          obj.save()
-         job_obj = Job(owner=username, job_code=job_code, status="pending")
+         job_obj = Job(owner=username, job_name=job_name, job_code=job_code, status="pending")
          job_obj.save()
 
          #get some stuff for mail
@@ -71,7 +72,7 @@ def dashboard(request):
          user_email = request.user.email
 
          #run
-         run_job.delay(username, job_code, domain, user_email)
+        #  run_job.delay(username, job_code, domain, user_email)
          return render(request, 'dashboard.html')
 
 
