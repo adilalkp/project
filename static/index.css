@@ -5770,7 +5770,7 @@ header .absolute-nav {
     margin-bottom: 8px;
   }
   .header-top .logo-area a img {
-    height: 43px;
+    height: 60px;
   }
   .header-top .top-nav {
     display: -webkit-box;
@@ -6132,7 +6132,7 @@ header .absolute-nav {
     position: relative;
   }
   .header-top .logo-area a img {
-    height: 40px;
+    height: 60px;
   }
   .header-top .header-top-toggler {
     display: block;

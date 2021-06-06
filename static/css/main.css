@@ -5076,7 +5076,7 @@ header .absolute-nav {
 }
 
 .header-top {
-  padding: 20px 0;
+  padding: 0px 0;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -5835,7 +5835,7 @@ header .absolute-nav {
     margin-bottom: 8px;
   }
   .header-top .logo-area a img {
-    height: 43px;
+    height: 70px;
   }
   .header-top .top-nav {
     display: -webkit-box;
