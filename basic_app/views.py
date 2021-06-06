@@ -85,3 +85,6 @@ def list_jobs(request):
 def individual_job(request, job_code):
     vehi_records = VehicleRecord.objects.filter(job_code=job_code)
     return render(request, 'indi_job.html', {'vehicle_records':vehi_records})
+
+def base(request):
+    return render(request, 'base.html')
