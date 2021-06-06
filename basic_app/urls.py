@@ -11,6 +11,7 @@ urlpatterns = [
     path('job/<uuid:job_code>', views.individual_job, name="ind_job"),
     path('base', views.base),
     path('jobs', views.jobs),
-    path('job', views.job)
+    path('job', views.job),
+    path('dash', views.testdashboard)
 
 ]

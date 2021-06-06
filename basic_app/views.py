@@ -1,4 +1,4 @@
-from .ml_module import run_job
+# from .ml_module import run_job
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from celery import shared_task
@@ -86,11 +86,17 @@ def individual_job(request, job_code):
     vehi_records = VehicleRecord.objects.filter(job_code=job_code)
     return render(request, 'indi_job.html', {'vehicle_records':vehi_records})
 
-def base(request):
+
+# for styling
+
+def testdashboard(request): #url 'dash'
+    return render(request, 'dashboard.html')
+
+def base(request): #url 'base'
     return render(request, 'base.html')
 
-def jobs(reqeust):
+def jobs(request): #url 'jobs'
     return render(request, 'jobs.html')
 
-def job(request):
+def job(request): #url 'job'
     return render(request, 'job.html')
