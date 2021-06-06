@@ -10,4 +10,7 @@ urlpatterns = [
     path('list_jobs', views.list_jobs, name="list_jobs"),
     path('job/<uuid:job_code>', views.individual_job, name="ind_job"),
     path('base', views.base),
+    path('jobs', views.jobs),
+    path('job', views.job)
+
 ]

@@ -88,3 +88,9 @@ def individual_job(request, job_code):
 
 def base(request):
     return render(request, 'base.html')
+
+def jobs(reqeust):
+    return render(request, 'jobs.html')
+
+def job(request):
+    return render(request, 'job.html')
