@@ -9797,7 +9797,7 @@ header .absolute-nav {
 	28.0 Account Style
 ---------------------------------------------*/
 .access-page-bg {
-  background: url("images/bg-ai.png") no-repeat center;
+  background: url("images/access-bg") no-repeat center;
   background-size: cover;
 }
 

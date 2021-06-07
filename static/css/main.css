@@ -6197,7 +6197,7 @@ header .absolute-nav {
     position: relative;
   }
   .header-top .logo-area a img {
-    height: 40px;
+    height: 70px;
   }
   .header-top .header-top-toggler {
     display: block;
@@ -9889,7 +9889,7 @@ header .absolute-nav {
 	28.0 Account Style
 ---------------------------------------------*/
 .access-page-bg {
-  background: url("../images/bg/access-bg.jpg") no-repeat center;
+  background: url("../images/bg/banner-3-bg.jpg") no-repeat center;
   background-size: cover;
 }
 
@@ -9900,7 +9900,7 @@ header .absolute-nav {
 
 .header-2.access-page-nav .header-top {
   margin-bottom: 0;
-  padding: 30px 0;
+  padding: 0px 0;
 }
 
 .top-nav .account-page-link {
