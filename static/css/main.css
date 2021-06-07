@@ -140,6 +140,17 @@ a:focus {
   outline: none;
 }
 
+
+#icon-space {
+  margin-right: 10px;
+}
+
+#icon-check {
+  margin-right: 10px;
+
+  color: #246df8;
+}
+
 .button {
   border: 1px solid transparent;
   outline: none;
