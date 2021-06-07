@@ -50,7 +50,7 @@
                           <td class="title">
 
                             <div class="body">
-                              <h5><a href="{% url 'basic_app:ind_job' job.job_code %}">Name of the job</a></h5>
+                              <h5><a href="{% url 'basic_app:ind_job' job.job_code %}">{{job.job_name}}</a></h5>
                               <div class="info">
                                 <span class="designation"><i data-feather="check-square"></i>Created on: {{job.created_on}}</span>
                                 {% if job.status == 'completed' %}

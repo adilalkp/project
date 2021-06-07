@@ -15,6 +15,7 @@ class Video(models.Model):
 
 class Job(models.Model):
     owner = CharField(blank=True, max_length=100)
+    job_name = CharField(blank=True, max_length=100)
     job_code = CharField(blank=True, max_length=100)
     status = CharField(blank=True, max_length=100)
     created_on = DateTimeField(default=timezone.now(), blank=True)
