@@ -38,11 +38,22 @@
                 <p>Upload the CCTV footage to be scanned. The file should be in the following formats : MP4, AVI</p>
                 <p>File size limit : Upto 100MB</p>
               </div>
+
+
+              <form action="{% url 'basic_app:dashboard' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+
                 <div class="download-resume dashboard-section">
-                <div class="update-file">
-                  <input type="file">Upload<i data-feather="upload-cloud"></i>
-                </div>
-                </div>
+                  <div class="update-file">
+                <input required type="file"  multiple name="video">Upload<i data-feather="upload-cloud"></i>
+              </div>
+            </div>
+
+
+                <input type="text" name="job_name">
+
+                <input type="submit" value="submit">
+            </form>  
 
             </div>
 
