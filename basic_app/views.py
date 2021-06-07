@@ -53,7 +53,7 @@ def logout_view(request):
 @login_required
 def dashboard(request):
     if request.method=="GET":
-        return render(request, 'dashboard.html')
+        return render(request, 'dashboard.html', {'post':0})
     else:
          username = str(request.user)
          video = request.FILES.get('video')
@@ -73,7 +73,8 @@ def dashboard(request):
 
          #run
         #  run_job.delay(username, job_code, domain, user_email)
-         return render(request, 'dashboard.html')
+
+         return render(request, 'dashboard.html', {'post':1})
 
 
 
