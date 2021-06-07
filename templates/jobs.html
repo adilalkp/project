@@ -60,14 +60,19 @@
                               {% endif %}
 
                               <div class="info">
-                                <span class="designation"><i data-feather="check-square"></i>Created on: {{job.created_on}}</span>
+                                <span class="designation"><i id="icon-space" class="far fa-calendar-plus"></i>Created on: {{job.created_on}}</span>
                                 {% if job.status == 'completed' %}
-                                <p><span class="location"><i data-feather="map-pin"></i>Completed on: {{job.completed_on}}</span></p>
+                                <p><span class="location"> <i class="far fa-calendar-check" id="icon-space"></i> Completed on: {{job.completed_on}}</span></p>
                                 {% endif %}
                               </div>
                             </div>
                           </td>
-                          <td class="status"><i data-feather="check-circle"></i>{{job.status}}</td>
+                          {% if job.status == 'completed' %}
+                          <td class="status"><i class="far fa-check-circle" id="icon-check">  </i>{{job.status|title}}</td>
+                          {% else %}
+                          <td class="status"><i class="far fa-clock" id="icon-space">  </i>{{job.status|title}}</td>
+
+                          {% endif %}
                           <td class="action">
 
                             {% if job.status == 'pending' %}
@@ -99,8 +104,8 @@
                     <div class="dashboard-menu">
                       <ul>
                         <li><i class="fas fa-home"></i><a href="{% url 'basic_app:dashboard' %}">Dashboard</a></li>
-                        <li class="active"><i class="fas fa-user"></i><a href="{% url 'basic_app:list_jobs' %}">Jobs List</a></li>
-                        <li><i class="fas fa-briefcase"></i><a href="{% url 'basic_app:logout' %}">Logout</a></li>
+                        <li class="active"><i class="fas fa-tasks"></i><a href="{% url 'basic_app:list_jobs' %}">Jobs List</a></li>
+                        <li><i class="fas fa-sign-out-alt"></i><a href="{% url 'basic_app:logout' %}">Logout</a></li>
                       </ul>
                     </div>
                   </div>
