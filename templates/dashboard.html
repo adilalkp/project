@@ -34,26 +34,35 @@
           <div class="dashboard-container">
             <div class="dashboard-content-wrapper">
 
-              <div class="card-body">
-                <p>Upload the CCTV footage to be scanned. The file should be in the following formats : MP4, AVI</p>
-                <p>File size limit : Upto 100MB</p>
+              <div class="feature-content">
+                <p>Upload the CCTV footage to be scanned.</p>
+                <p> The file should be in the following formats : MP4, AVI</p>
+                <p>File size limit : Upto 100MB</p><br>
               </div>
 
 
-              <form action="{% url 'basic_app:dashboard' %}" method="POST" enctype="multipart/form-data">
+              <form action="{% url 'basic_app:dashboard' %}" method="POST" enctype="multipart/form-data" class="dashboard-form">
                 {% csrf_token %}
-
+                <div class="dashboard-section basic-info-input">
+                <div class="form-group row">
+                <label class="col-sm-3 col-form-label">Job Name</label>
+                <div class="col-sm-7">
+                  <input type="text" class="form-control" placeholder="Job Name"  name="job_name"><br>
+                </div>
+                  <label class="col-md-3 col-form-label">Upload Video</label>
                 <div class="download-resume dashboard-section">
                   <div class="update-file">
-                <input required type="file"  multiple name="video">Upload<i data-feather="upload-cloud"></i>
+                    <input required type="file"  multiple name="video">Video file<i data-feather="upload-cloud"></i>
+                  </div>
+                </div>
+                <div class="col-sm-9">
+                    <br><input class="button" type="submit" value="Submit"></input>
+                </div>
+                </div>
               </div>
-            </div>
 
+            </form>
 
-                <input type="text" name="job_name">
-
-                <input type="submit" value="submit">
-            </form>  
 
             </div>
 
