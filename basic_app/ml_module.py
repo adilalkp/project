@@ -145,7 +145,7 @@ def read_plates(username, job_code):
     return plates_list
 
 
-@shared_task
+# @shared_task
 def run_job(username, job_code, domain, user_email):
     #first read plates
     plates_list = read_plates(username, job_code)
