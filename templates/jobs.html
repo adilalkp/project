@@ -40,7 +40,7 @@
                         <tr>
                           <th>Job Title</th>
                           <th>Status</th>
-                          <th class="action">Action</th>
+                          <th class="action"></th>
                         </tr>
                       </thead>
                       <tbody>
@@ -52,8 +52,10 @@
                             <div class="body">
                               <h5><a href="{% url 'basic_app:ind_job' job.job_code %}">{{job.job_name}}</a></h5>
                               <div class="info">
-                                <span class="designation"><a href="#"><i data-feather="check-square"></i>{{job.created_on}}</a></span>
-                                <!--<span class="location"><a href="#"><i data-feather="map-pin"></i>New Orleans</a></span>-->
+                                <span class="designation"><i data-feather="check-square"></i>Created on: {{job.created_on}}</span>
+                                {% if job.status == 'completed' %}
+                                <p><span class="location"><i data-feather="map-pin"></i>Completed on: {{job.completed_on}}</span></p>
+                                {% endif %}
                               </div>
                             </div>
                           </td>
@@ -63,16 +65,12 @@
                             {% if job.status == 'pending' %}
                             <div class="candidate">
                               <div class="body">
-
-                                <div class="button-area">
-                                  <a href="#">View Job</a>
+                                  <a>View Job</a>
                                 </div>
-                              </div>
                             </div>
                             {% else %}
                             <div class="candidate">
                                 <div class="body">
-  
                                   <div class="button-area">
                                     <a href="{% url 'basic_app:ind_job' job.job_code %}">View Job</a>
                                   </div>
