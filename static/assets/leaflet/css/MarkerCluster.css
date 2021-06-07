@@ -38,7 +38,6 @@
 	width: 70px !important;
     height: 90px !important;
     background-color: transparent !important;
-	background-image: url('../../../images/marker/number_inline.png') !important;
 
 }
 .leaflet-marker-icon.marker-cluster > div {
