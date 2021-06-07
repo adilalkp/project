@@ -34,6 +34,21 @@
           <div class="dashboard-container">
             <div class="dashboard-content-wrapper">
 
+              {% if post %}
+            <div class="alert-wrap">
+              <div class="jy-alert success-alert">
+                <div class="icon">
+                  <i class="fas fa-check-circle"></i>
+                </div>
+                <p>Success!  You have successfully uploaded the video. Job Created!</p>
+                <div class="close_">
+                  <a href="{% url 'basic_app:dashboard' %}"><i class="fas fa-times"></i></a>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+
+              <br>
               <div class="feature-content">
                 <p>Upload the CCTV footage to be scanned.</p>
                 <p> The file should be in the following formats : MP4, AVI</p>
@@ -62,6 +77,8 @@
               </div>
 
             </form>
+
+
 
 
             </div>
