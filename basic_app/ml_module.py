@@ -134,9 +134,6 @@ def read_plates(username, job_code):
                     else:
                         plates_list.append(chkplt)
                     #accomodate colour code
-
-
-
         except Exception as e:
             print(e)
             pass
@@ -178,10 +175,10 @@ def run_job(username, job_code, domain, user_email):
     message.send()
 
     #clear ml waste(frames, video..)
-    if os.path.exists('framesimages/{}/{}'.format(username,job_code)):
-        job_frames_location = BASE_DIR / "framesimages/{}/{}/".format(username,job_code)
-        shutil.rmtree(job_frames_location)
-    video_obj = Video.objects.filter(job_code=job_code).first()
-    video_obj.delete()
+    # if os.path.exists('framesimages/{}/{}'.format(username,job_code)):
+    #     job_frames_location = BASE_DIR / "framesimages/{}/{}/".format(username,job_code)
+    #     shutil.rmtree(job_frames_location)
+    # video_obj = Video.objects.filter(job_code=job_code).first()
+    # video_obj.delete()
 
     
