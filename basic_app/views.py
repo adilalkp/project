@@ -80,7 +80,8 @@ def dashboard(request):
 
 def list_jobs(request):
     username = str(request.user)
-    jobs = Job.objects.filter(owner=username).order_by('-created_on')
+    jobs = Job.objects.filter(owner=username).order_by('-created_on__minute')
+
     return render(request, 'jobs.html', {'joblist':jobs, 'username':username})
 
 def individual_job(request, job_code):
