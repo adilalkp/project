@@ -1,8 +1,8 @@
-from .ml_module import run_job
+from basic_app.ml.ml_module import run_job
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from celery import shared_task
-
+from django.utils import timezone
 
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib import messages
@@ -63,7 +63,7 @@ def dashboard(request):
          video._name = filename
          obj = Video(owner=username, videofile=video, job_code=job_code)
          obj.save()
-         job_obj = Job(owner=username, job_name=job_name, job_code=job_code, status="pending")
+         job_obj = Job(owner=username, job_name=job_name, job_code=job_code, status="pending", created_on=timezone.now())
          job_obj.save()
 
          #get some stuff for mail
@@ -72,7 +72,7 @@ def dashboard(request):
          user_email = request.user.email
 
          #run
-         run_job.delay(username, job_code, domain, user_email)
+         run_job(username, job_code, domain, user_email)
 
          return render(request, 'dashboard.html', {'post':1})
 
