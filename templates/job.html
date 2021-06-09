@@ -58,7 +58,8 @@
                             <div class="content">
                               <h4>{{vehicle.license_plate}}</h4>
                               <div class="info">
-                                <span class="work-post"> <i class="fas fa-fill" id="icon-space"></i>{{vehicle.colour}}</span>
+                                <span class="work-post"><a href="#"> <i class="fas fa-fill-drip" id="icon-space"></i> {{vehicle.colour}}</a></span>
+
 
                                 {% if vehicle.vehicle_type == 'Car' %}
                                 <span class="location"><i class="fas fa-car" id="icon-space"></i>{{vehicle.vehicle_type}}</span>
