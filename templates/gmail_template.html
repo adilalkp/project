@@ -105,8 +105,8 @@
                     <br>
                     <br>
                     <br>
-                    {% for plate in content %}
-                     {{forloop.counter}}.   {{plate}}  <br> 
+                    {% for record in content %}
+                     {{forloop.counter}}.   {{record[1]}} {{record[2]}} {{record[3]}} <br> 
                      {% endfor %}
 
 
