@@ -90,21 +90,15 @@
                         <img src="images/account/thumb-1.jpg" class="img-fluid" alt="">
                       </a>
                       <div class="account-body">
-                        <h5><a href="#">Robert Chavez</a></h5>
-                        <span class="mail">chavez@domain.com</span>
+                        <h5><a href="#">{{username}}</a></h5>
+                        <span class="mail">{{email}}</span>
                       </div>
                     </div>
                     <ul class="account-item-list">
-                      <li><a href="#"><span class="ti-user"></span>Account</a></li>
-                      <li><a href="#"><span class="ti-settings"></span>Settings</a></li>
                       <li><a href=" {% url 'basic_app:logout' %} "><span class="ti-power-off"></span>Log Out</a></li>
                     </ul>
                   </div>
                 </div>
-                <select class="selectpicker select-language" data-width="fit">
-                  <option data-content='<span class="flag-icon flag-icon-us"></span> English'>English</option>
-                  <option  data-content='<span class="flag-icon flag-icon-mx"></span> Español'>Español</option>
-                </select>
               </div>
             </div>
           </div>
