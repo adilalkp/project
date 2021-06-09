@@ -1,6 +1,6 @@
 def user_name(request):
     username = request.user
-    return username
+    return user_name
 
 def email(request):
     email = request.user.email
