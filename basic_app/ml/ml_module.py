@@ -370,7 +370,7 @@ def attribute_extract(path, username, job_code):
 
 
 @shared_task
-def run_job(username, job_code, domain, email):
+def run_job(username, job_code, domain, user_email):
     path = str(BASE_DIR / '../media/videosfolder/{}-{}.mp4'.format(username, job_code))
     attributes_list = attribute_extract(path, username, job_code)
 
