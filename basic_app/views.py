@@ -1,4 +1,4 @@
-# from basic_app.ml.ml_module import run_job
+from basic_app.ml.ml_module import run_job
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from celery import shared_task
@@ -74,26 +74,30 @@ def dashboard(request):
          user_email = request.user.email
 
          #run
-        #  run_job.delay(username, job_code, domain, user_email)
+         run_job.delay(username, job_code, domain, user_email)
 
          return render(request, 'dashboard.html', {'post':1})
 
 
 
 def list_jobs(request):
-    jobs = Job.objects.filter(owner=username).order_by('-created_on')
+    jobs = Job.objects.filter(owner=request.user).order_by('-created_on')
     return render(request, 'jobs.html', {'joblist':jobs})
 
 
 def individual_job(request, job_code):
-    if requ.method=='GET':
+    if request.method=='GET':
         vehi_records = VehicleRecord.objects.filter(job_code=job_code)
         nums = len(vehi_records)
-        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums})
+        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums, 'job_code':job_code})
     else:
-        key = 
-        vehi_records = VehicleRecord.objects.annotate(search=key).filter(search=key)
+        key = request.POST['key']
+        print(key)
+        print(type(key))
+        vehi_records = VehicleRecord.objects.annotate(search=SearchVector('license_plate','colour','vehicle_type'),).filter(search=key)
+        nums = len(vehi_records)
+        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums, 'job_code':job_code})
 
 
 
-# for styling
+

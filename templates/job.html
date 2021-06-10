@@ -21,7 +21,8 @@
             </div>
             <div class="col-md-6">
               <div class="breadcrumb-form">
-                <form action="{% url 'basic_app:list_jobs' %}">
+                <form action="{% url 'basic_app:ind_job' job_code %}" method="POST">
+                  {% csrf_token %}
                   <input type="text" name="key" placeholder="Enter Keywords">
                   <button><i data-feather="search"></i></button>
                 </form>
