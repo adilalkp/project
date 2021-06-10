@@ -19,6 +19,14 @@
                 </nav>
               </div>
             </div>
+            <div class="col-md-6">
+              <div class="breadcrumb-form">
+                <form action="{% url 'basic_app:list_jobs' %}">
+                  <input type="text" name="key" placeholder="Enter Keywords">
+                  <button><i data-feather="search"></i></button>
+                </form>
+              </div>
+            </div>
 
           </div>
         </div>
@@ -36,6 +44,7 @@
 
                       <div class="candidate-view-controller-wrapper">
                           <div class="candidate-view-controller">
+
                             <div class="controller list active">
                               <i data-feather="menu"></i>
                             </div>
