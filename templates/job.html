@@ -23,7 +23,7 @@
               <div class="breadcrumb-form">
                 <form action="{% url 'basic_app:ind_job' job_code %}" method="POST">
                   {% csrf_token %}
-                  <input type="text" name="key" placeholder="Enter Keywords">
+                  <input type="text" name="key" placeholder="Enter Attributes">
                   <button><i data-feather="search"></i></button>
                 </form>
               </div>
@@ -58,7 +58,12 @@
                         </div>
 
                         {% for vehicle in vehicle_records %}
+                        {% if nums == 0 %}
                         <div class="candidate">
+                          <h3>No Records to Show</h3>
+                        </div>
+                        {% else %}
+                          <div class="candidate">
                           <div class="thumb">
                             <a href="#">
                               <img src="images/candidate/thumb-1.jpg" class="img-fluid" alt="">
@@ -88,7 +93,7 @@
                             </div>
                           </div>
                         </div>
-
+                          {% endif %}
                         {% endfor %}
 
 
