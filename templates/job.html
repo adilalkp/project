@@ -58,16 +58,8 @@
                         </div>
 
                         {% for vehicle in vehicle_records %}
-                        {% if nums == 0 %}
+                        {% if nums %}
                         <div class="candidate">
-                        <div class="body">
-                          <div class="content">
-                            <h2>No results matching the given attributes</h2>
-                            </div>
-                        </div>
-                        </div>
-                        {% else %}
-                          <div class="candidate">
                           <div class="thumb">
                             <a href="#">
                               <img src="images/candidate/thumb-1.jpg" class="img-fluid" alt="">
@@ -97,6 +89,15 @@
                             </div>
                           </div>
                         </div>
+                        {% else %}
+                        <div class="candidate">
+                          <div class="body">
+                            <div class="content">
+                              <h2>No results matching the given attributes</h2>
+                              </div>
+                          </div>
+                          </div>
+  
                           {% endif %}
                         {% endfor %}
 
