@@ -1,7 +1,14 @@
 def user_name(request):
-    user_name = request.user
+    if request.user:
+        user_name = request.user
+    else:
+        user_name =  ""
     return {'user_name':user_name}
 
 def email(request):
-    email = request.user.email
+    if request.user:
+        email = request.user.email
+    else:
+        email = ""
+
     return {'email':email}
