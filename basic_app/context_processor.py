@@ -1,14 +1,14 @@
 def user_name(request):
-    if request.user != 'AnonymousUser':
+    try:
         user_name = request.user
-    else:
-        user_name =  ""
+    except:
+        user_name = ""
     return {'user_name':user_name}
 
 def email(request):
-    if request.user != 'AnonymousUser':
+    try:
         email = request.user.email
-    else:
+    except:
         email = ""
 
     return {'email':email}
