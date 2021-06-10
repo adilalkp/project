@@ -1,8 +1,10 @@
-from basic_app.ml.ml_module import run_job
+# from basic_app.ml.ml_module import run_job
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from celery import shared_task
 from django.utils import timezone
+from django.contrib.postgres.search import SearchVector
+
 
 from django.contrib.auth import (authenticate, login, logout)
 from django.contrib import messages
@@ -72,22 +74,26 @@ def dashboard(request):
          user_email = request.user.email
 
          #run
-         run_job.delay(username, job_code, domain, user_email)
+        #  run_job.delay(username, job_code, domain, user_email)
 
          return render(request, 'dashboard.html', {'post':1})
 
 
 
 def list_jobs(request):
-    username = str(request.user)
     jobs = Job.objects.filter(owner=username).order_by('-created_on')
+    return render(request, 'jobs.html', {'joblist':jobs})
 
-    return render(request, 'jobs.html', {'joblist':jobs, 'username':username})
 
 def individual_job(request, job_code):
-    vehi_records = VehicleRecord.objects.filter(job_code=job_code)
-    nums = len(vehi_records)
-    return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums})
+    if requ.method=='GET':
+        vehi_records = VehicleRecord.objects.filter(job_code=job_code)
+        nums = len(vehi_records)
+        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums})
+    else:
+        key = 
+        vehi_records = VehicleRecord.objects.annotate(search=key).filter(search=key)
+
 
 
 # for styling
