@@ -103,7 +103,6 @@ def frame_extraction(path, username, job_code):
     while cap.isOpened():
         ret, frame = cap.read()
         if ret:
-            print("ret")
             name = './framesimages/{}/{}/frame{}.jpg'.format(username, job_code, str(cur))
             cv2.imwrite(name, frame)
             cur=cur+1
