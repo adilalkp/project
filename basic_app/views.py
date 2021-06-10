@@ -89,13 +89,21 @@ def individual_job(request, job_code):
     if request.method=='GET':
         vehi_records = VehicleRecord.objects.filter(job_code=job_code)
         nums = len(vehi_records)
-        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums, 'job_code':job_code})
+        if len==0:
+            blank = 'yes'
+        else:
+            blank = 'no'
+        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums, 'job_code':job_code, 'blank':blank})
     else:
         key = request.POST['key']
         vehi_records = VehicleRecord.objects.filter(job_code=job_code)
         vehi_records = vehi_records.annotate(search=SearchVector('license_plate','colour','vehicle_type'),).filter(search=key)
         nums = len(vehi_records)
-        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums, 'job_code':job_code})
+        if len==0:
+            blank = 'yes'
+        else:
+            blank = 'no'
+        return render(request, 'job.html', {'vehicle_records':vehi_records, 'nums':nums, 'job_code':job_code, 'blank':blank})
 
 
 
