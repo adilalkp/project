@@ -8,3 +8,4 @@ staticfiles
 **/.DS_Store
 framesimages
 mydatabase
+staticfiles

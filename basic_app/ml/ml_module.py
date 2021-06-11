@@ -10,6 +10,7 @@ from celery import shared_task
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import get_template
+from django.core.files import File
 
 # Commented out IPython magic to ensure Python compatibility.
 # Import the necessary packages
@@ -364,6 +365,10 @@ def attribute_extract(path, username, job_code):
       ans.append(vehicle_license_plate(extracted_image_paths[i],wpod_net,reader))
       ans.append(vehicle_color(extracted_image_paths[i]))
       ans.append(vehicle_type(extracted_image_paths[i],model,labels))
+      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model="nil", vehicle_logo="nil")      
+      imageopen = open("{}".format(extracted_image_paths[i]), "rb")
+      imagefile = File(imageopen)
+      record.image.save("{}-{}-{}".format(username, job_code, i), imagefile, save=True)
       finalans.append(ans)
   return finalans
 
@@ -373,9 +378,9 @@ def run_job(username, job_code, domain, user_email):
     path = str(BASE_DIR / '../media/videosfolder/{}-{}.mp4'.format(username, job_code))
     attributes_list = attribute_extract(path, username, job_code)
 
-    for attrs in attributes_list:
-        record = VehicleRecord(job_code=job_code, license_plate=attrs[1], colour=attrs[2], vehicle_type=attrs[3], vehicle_model="nil", vehicle_logo="nil")
-        record.save()
+    # for attrs in attributes_list:
+    #     record = VehicleRecord(job_code=job_code, license_plate=attrs[1], colour=attrs[2], vehicle_type=attrs[3], vehicle_model="nil", vehicle_logo="nil")
+    #     record.save()
     job_obj = Job.objects.filter(job_code=job_code).first()
     job_obj.status = "completed"
     job_obj.completed_on = timezone.now()
