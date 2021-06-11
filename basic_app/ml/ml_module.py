@@ -368,7 +368,7 @@ def attribute_extract(path, username, job_code):
       record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model="nil", vehicle_logo="nil")      
       imageopen = open("{}".format(extracted_image_paths[i]), "rb")
       imagefile = File(imageopen)
-      record.image.save("{}-{}-{}".format(username, job_code, i), imagefile, save=True)
+      record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
       finalans.append(ans)
   return finalans
 
