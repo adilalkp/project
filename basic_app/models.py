@@ -25,6 +25,7 @@ class Job(models.Model):
 
 
 class VehicleRecord(models.Model):
+    image = ImageField(null=True, blank=True)
     job_code = CharField(blank=True, max_length=100)
     license_plate = CharField(blank=True, null=True, max_length=100)
     colour = CharField(blank=True, null=True, max_length=100)
