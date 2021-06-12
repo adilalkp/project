@@ -214,7 +214,7 @@ def vehicle_detect(username, job_code):
         x=(x1+x2)/2
         y=(y1+y2)/2
         y=max(y1,y2)
-        if(y>650 and y<750):
+        if(y>500 and y<700):
           d=c[y1:y2, x1:x2]
           name = './framesimages/{}/{}/extracted{}.jpg'.format(username, job_code, str(j))
           j=j+1
@@ -227,57 +227,207 @@ def vehicle_detect(username, job_code):
     ans=show_inference(detection_model, image_path,j, username, job_code)
     j=ans
 
-#Module to detect license plate and recognise the license plate characters from it. The model used for license plate 
-#detection is wpod-net and the recognition is done using ocr (pytorch)
-def vehicle_license_plate(impath,wpod_net,reader):  
-  def get_plate(wpod_net, image_path, Dmax=608, Dmin=280):
-      vehicle = preprocess_image(image_path)
-      ratio = float(max(vehicle.shape[:2])) / min(vehicle.shape[:2])
-      side = int(ratio * Dmin)
-      bound_dim = min(side, Dmax)
-      _ , LpImg, _, cor = detect_lp(wpod_net, vehicle, bound_dim, lp_threshold=0.5)
-      return LpImg, cor
 
-  def preprocess_image(image_path,resize=False):
-      img = cv2.imread(image_path)
-      img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-      img = img / 255
-      if resize:
-          img = cv2.resize(img, (224,224))
-      return img
-  def filt(thresh,ocr_result,regthresh):
-    rect=thresh.shape[0]*thresh.shape[1]
-    plate=[]
-    for result in ocr_result:
-      ln=np.sum(np.subtract(result[0][1],result[0][0]))
-      h=np.sum(np.subtract(result[0][2],result[0][1]))
-      if ln*h/rect>regthresh:
-        plate.append(result[1])  
-    return plate
-  try:
-    LpImg,_ = get_plate(wpod_net, impath)
-    regthresh=0.7
-    plate = cv2.convertScaleAbs(LpImg[0], alpha=(255.0))
-    V = cv2.split(cv2.cvtColor(plate, cv2.COLOR_BGR2HSV))[2]
-    T = threshold_local(V, 29, offset=15, method="gaussian")
-    thresh = (V > T).astype("uint8") * 255
-    thresh = cv2.bitwise_not(thresh)
-    thresh = imutils.resize(thresh, width=400)
-    ocr_result=reader.readtext(thresh)
-    c=filt(thresh,ocr_result,regthresh)
-    cnts=''
-    for i in c:
-      cnts=cnts+i
-    finalplate =''
-    for character in cnts:
-        if character.isalnum():
-            finalplate += character.upper()    
-    if len(finalplate)==0:
-      return 0
-    else:
+
+def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):  
+    def get_plate(wpod_net, image_path, Dmax=608, Dmin=280):
+        vehicle = preprocess_image(image_path)
+        ratio = float(max(vehicle.shape[:2])) / min(vehicle.shape[:2])
+        side = int(ratio * Dmin)
+        bound_dim = min(side, Dmax)
+        _ , LpImg, _, cor = detect_lp(wpod_net, vehicle, bound_dim, lp_threshold=0.5)
+        return LpImg, cor
+
+    def preprocess_image(image_path,resize=False):
+        img = cv2.imread(image_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = img / 255
+        if resize:
+            img = cv2.resize(img, (224,224))
+        return img
+
+    def filt(thresh,ocr_result,regthresh):
+      rect=thresh.shape[0]*thresh.shape[1]
+      plate=[]
+      for result in ocr_result:
+        ln=np.sum(np.subtract(result[0][1],result[0][0]))
+        h=np.sum(np.subtract(result[0][2],result[0][1]))
+        if ln*h/rect>regthresh:
+          plate.append(result[1])
+      return plate
+
+    def order_points(pts):
+      rect = np.zeros((4, 2), dtype = "float32")
+      s = pts.sum(axis = 1)
+      rect[0] = pts[np.argmin(s)]
+      rect[2] = pts[np.argmax(s)]
+      diff = np.diff(pts, axis = 1)
+      rect[1] = pts[np.argmin(diff)]
+      rect[3] = pts[np.argmax(diff)]
+      return rect
+
+    def four_point_transform(image, pts):
+      rect = order_points(pts)
+      (tl, tr, br, bl) = rect
+      widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
+      widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
+      maxWidth = max(int(widthA), int(widthB))
+      heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
+      heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
+      maxHeight = max(int(heightA), int(heightB))
+      dst = np.array([
+        [0, 0],
+        [maxWidth - 1, 0],
+        [maxWidth - 1, maxHeight - 1],
+        [0, maxHeight - 1]], dtype = "float32")
+      M = cv2.getPerspectiveTransform(rect, dst)
+      warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
+      return warped
+
+    def ocrrecognition(img,reader):
+      regthresh=0.7
+      plate = cv2.convertScaleAbs(img, alpha=(255.0))
+      V = cv2.split(cv2.cvtColor(plate, cv2.COLOR_BGR2HSV))[2]
+      T = threshold_local(V, 29, offset=15, method="gaussian")
+      thresh = (V > T).astype("uint8") * 255
+      thresh = cv2.bitwise_not(thresh)
+      thresh = imutils.resize(thresh, width=400)
+      ocr_result=reader.readtext(thresh)
+      c=filt(thresh,ocr_result,regthresh)
+      cnts=''
+      for i in c:
+        cnts=cnts+i
+      finalplate =''
+      for character in cnts:
+          if character.isalnum():
+              finalplate += character.upper()
       return finalplate
-  except:
-    return 0
+
+    def predict_from_model(image,model,labels):
+      image = cv2.resize(image,(80,80))
+      image = np.stack((image,)*3, axis=-1)
+      prediction = labels.inverse_transform([np.argmax(model.predict(image[np.newaxis,:]))])
+      return prediction
+
+    def sort_function(d,e):
+        n = len(e)
+        for i in range(n-1):
+            for j in range(0, n-i-1):
+                if e[j] > e[j+1] :
+                        e[j], e[j+1] = e[j+1], e[j]
+                        d[j], d[j+1] = d[j+1], d[j]
+        return d
+
+    def sort_contours(cnts):
+        reverse = False
+        i = 0
+        boundingBoxes = [cv2.boundingRect(c) for c in cnts]
+        (cnts, boundingBoxes) = zip(*sorted(zip(cnts, boundingBoxes),
+          key=lambda b:b[1][i], reverse=reverse))
+        return cnts
+
+    def segm(img):
+          plate_image = cv2.convertScaleAbs(img, alpha=(255.0))
+          gray = cv2.cvtColor(plate_image, cv2.COLOR_BGR2GRAY)
+          blur = cv2.GaussianBlur(gray,(5,5),0)
+          binary = cv2.threshold(blur, 180, 255,
+                              cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+          kernel3 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+          thre_mor = cv2.morphologyEx(binary, cv2.MORPH_DILATE, kernel3)
+          cont, _  = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+          test_roi = plate_image.copy()
+          crop_characters = []
+          digit_w, digit_h = 30, 60
+          for c in sort_contours(cont):
+            (x, y, w, h) = cv2.boundingRect(c)
+            ratio = h/w
+            if 1<=ratio<=3.5:
+                if h/plate_image.shape[0]>=0.5:
+                    cv2.rectangle(test_roi, (x, y), (x + w, y + h), (0, 255,0), 2)
+                    curr_num = thre_mor[y:y+h,x:x+w]
+                    curr_num = cv2.resize(curr_num, dsize=(digit_w, digit_h))
+                    _, curr_num = cv2.threshold(curr_num, 220, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+                    crop_characters.append(curr_num)
+            final_string = ''
+            for j,character in enumerate(crop_characters):
+                title = np.array2string(predict_from_model(character,loaded_model,labels))
+                final_string+=title.strip("'[]")
+          return final_string
+
+    def detectCharacterCandidates(image,region):
+      plate=four_point_transform(image,region)
+      V = cv2.split(cv2.cvtColor(plate, cv2.COLOR_BGR2HSV))[2]
+      T = threshold_local(V, 29, offset=15, method="gaussian")
+      thresh = (V > T).astype("uint8") * 255
+      thresh = cv2.bitwise_not(thresh)
+      plate= imutils.resize(plate, width=400)
+      thresh = imutils.resize(thresh, width=400)
+      labels = measure.label(thresh, neighbors=8, background=0)
+      charCandidates = np.zeros(thresh.shape, dtype="uint8")
+      crop_characters=[]
+      x_cor=[]
+      i=0
+      for label in np.unique(labels):
+        if label == 0:
+          continue
+        labelMask = np.zeros(thresh.shape, dtype="uint8")
+        labelMask[labels == label] = 255
+        cnts = cv2.findContours(labelMask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
+        if len(cnts) > 0:
+          c=max(cnts,key=cv2.contourArea)
+          (x, y, w, h) = cv2.boundingRect(c)
+          aspectRatio = w / float(h)
+          solidity = cv2.contourArea(c) / float(w * h)
+          heightRatio = h / float(plate.shape[0])
+          keepAspectRatio = aspectRatio < 1.0
+          keepSolidity = solidity > 0.15
+          keepHeight = heightRatio > 0.4 and heightRatio < 0.95
+
+          if keepAspectRatio and keepSolidity and keepHeight:
+            cv2.rectangle(plate, (x, y), (x + w, y + h), (0, 255,0), 2)
+            curr_num = thresh[y:y+h,x:x+w]
+            curr_num = cv2.resize(curr_num, dsize=(30, 60))
+            _, curr_num = cv2.threshold(curr_num, 220, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            crop_characters.insert(i,curr_num)
+            x_cor.insert(i,x)
+            hull = cv2.convexHull(c)
+            cv2.drawContours(charCandidates, [hull], -1, 255, -1)
+            i=i+1
+      charCandidates = segmentation.clear_border(charCandidates)
+      return (charCandidates,crop_characters,x_cor)
+
+    def segm2(impath,pts):
+        crop_c=[]
+        x_c=[]
+        char_c,crop_c,x_c=detectCharacterCandidates(cv2.imread(impath),pts)
+        d=sort_function(crop_c,x_c)
+        final_string = ''
+        for i,character in enumerate(d):
+            title = np.array2string(predict_from_model(character,loaded_model,labels))
+            final_string+=title.strip("'[]")
+        return final_string
+
+    try:
+      plates=[]
+      LpImg,cor = get_plate(wpod_net, impath)
+      pts=[]
+      x_coordinates=cor[0][0]
+      y_coordinates=cor[0][1]
+      for i in range(4):
+          pts.append((int(x_coordinates[i]),int(y_coordinates[i])))
+      plates.append(segm(LpImg[0]))
+      plates.append(segm2(impath,np.array(pts)))
+      plates.append(ocrrecognition(LpImg[0],reader))
+      plates.sort(key=len)
+
+      if len(plates[1])>7:
+        return plates[1]
+      else:
+        return plates[2]
+    except Exception as e:
+      print(e)
+      return 0
+
 
 #Module to identify the color of the detected vehicle
 def vehicle_color(impath):
@@ -356,13 +506,20 @@ def attribute_extract(path, username, job_code):
   vehicle_detect(username, job_code)
   wpod_net_path = BASE_DIR / "ml/wpod-net.json"
   wpod_net = load_model(wpod_net_path)
+  json_file = open(BASE_DIR / 'ml/MobileNets_character_recognition.json', 'r')
+  loaded_model_json = json_file.read()
+  json_file.close()
+  recognition_model = model_from_json(loaded_model_json)
+  recognition_model.load_weights(BASE_DIR / "ml/recognition.h5")
+  characterlabels = LabelEncoder()
+  characterlabels.classes_ = np.load(BASE_DIR / 'ml/license_character_classes.npy')
   model,labels=loadtypemodel()
   reader=easyocr.Reader(['en'])
   extracted_image_paths = glob.glob("framesimages/{}/{}/extracted*.jpg".format(username, job_code))
   for i in range(len(extracted_image_paths)):
       ans=[]
       ans.append(extracted_image_paths[i])
-      ans.append(vehicle_license_plate(extracted_image_paths[i],wpod_net,reader))
+      ans.append(vehicle_license_plate(extracted_image_paths[i],wpod_net,reader,recognition_model, characterlabels))
       ans.append(vehicle_color(extracted_image_paths[i]))
       ans.append(vehicle_type(extracted_image_paths[i],model,labels))
       record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model="nil", vehicle_logo="nil")      
@@ -371,6 +528,7 @@ def attribute_extract(path, username, job_code):
       record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
       finalans.append(ans)
   return finalans
+
 
 
 @shared_task
