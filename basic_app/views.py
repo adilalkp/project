@@ -146,8 +146,8 @@ def generate(request, job_code):
 def generate_key(request, job_code, key):
     vehi_records = VehicleRecord.objects.filter(job_code=job_code)
     vehi_records = vehi_records.annotate(search=SearchVector('license_plate','colour','vehicle_type'),).filter(search=key)
-
-    html_string = render_to_string('report.html', {'records':vehi_records, 'username':request.user, 'email':request.user.email, 'date':timezone.now()})
+    dates = timezone.now()
+    html_string = render_to_string('report.html', {'records':vehi_records, 'username':request.user, 'email':request.user.email, 'date':dates})
     html = HTML(string=html_string, base_url=request.build_absolute_uri())
     result = html.write_pdf()
 
