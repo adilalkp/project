@@ -41,14 +41,15 @@
             <div class="row no-gliters">
               <div class="col">
                 <div class="dashboard-container">
+
+                  {% if blank == 'no' %}
+
                   <div class="dashboard-content-wrapper">
 
                       <div class="candidate-view-controller-wrapper">
                           <div class="candidate-view-controller">
 
-                            <div class="controller list active">
-                              <i data-feather="menu"></i>
-                            </div>
+
 
 
                           </div>
@@ -58,7 +59,6 @@
                         </div>
 
                         {% for vehicle in vehicle_records %}
-                        {% if blank == 'no' %}
                         <div class="candidate">
                           <div class="thumb">
                             <a href="#">
@@ -89,26 +89,41 @@
                             </div>
                           </div>
                         </div>
-                        {% else %}
-                        <div class="candidate">
-                          <div class="thumb">
-                            <a href="#">
-                              <img src="images/candidate/thumb-1.jpg" class="img-fluid" alt="">
-                            </a>
-                          </div>
-                          <div class="body">
-                            <div class="content">
-                              <h4>No results matching the given attributes</h4>
-                              </div>
-                          </div>
-                          </div>
-  
-                          {% endif %}
+
                         {% endfor %}
 
+                          {% if key %}
+                          <form action="{% url 'basic_app:generate_key' job_code key %}" method="POST">
+                            {% csrf_token %}
+                            <br><button type="submit" class="btn btn-primary btn-lg">Generate Report</button>
+                            </form>
+                          {% else %}
+                          <form action="{% url 'basic_app:generate' job_code %}" method="POST">
+                            {% csrf_token %}
+                           <br> <button type="submit" class="btn btn-primary btn-lg">Generate Report</button>
 
-
+                          </form>
+                          {% endif %}
                   </div>
+                  {% else %}
+                  <div class="dashboard-content-wrapper">
+
+
+
+                            <div class="alert-wrap">
+                              <div class="jy-alert danger-alert">
+                                <div class="icon">
+                                  <i class="fas fa-check-circle"></i>
+                                </div>
+                                <p>No results matching the entered keyword!!</p>
+                                <div class="close_">
+                                  <a href="{% url 'basic_app:dashboard' %}"><i class="fas fa-times"></i></a>
+                                </div>
+                              </div>
+                            </div>
+
+                          </div>
+                  {% endif %}
 
                   <div class="dashboard-sidebar">
                     <div class="dashboard-menu">
