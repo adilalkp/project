@@ -106,7 +106,12 @@
                     <br>
                     <br>
                     {% for record in content %}
-                     {{forloop.counter}}.   {{record.1}}, {{record.2}}, {{record.3}}, <span> {{record.4}}.</span> <br> 
+                    {% if not record.1 == '0' %}
+                    {{forloop.counter}}. <b>{{record.2 | title}}</b> <b> {{record.3}} </b> with license plate <b> {{record.1}} </b> found at <b> {{record.4}} </b>. <br>
+                    {% else %}
+                    {{forloop.counter}}. <b> {{record.2 | title}} </b> <b> {{record.3}} </b> with license plate undetected found at <b> {{record.4}}</b>. <br>
+                  {% endif %}
+                     <!-- {{forloop.counter}}.   {{record.1}}, {{record.2}}, {{record.3}}, <span> {{record.4}}.</span> <br>  -->
                      {% endfor %}
 
 

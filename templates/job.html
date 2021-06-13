@@ -68,7 +68,11 @@
                           </div>
                           <div class="body">
                             <div class="content">
+                              {% if vehicle.license_plate == '0' %}
+                              <h4>Not Detected</h4>
+                              {% else %}
                               <h4>{{vehicle.license_plate}}</h4>
+                              {% endif %}
                               <div class="info">
 
                                 <span class="work-post"><a href="#"><i data-feather="check-square"></i>{{vehicle.colour}}</a></span>
@@ -106,8 +110,12 @@
                           </div>
                           <div class="body">
                             <div class="content">
+                              {% if vehicle.license_plate == '0' %}
+                              <h4>Not Detected</h4>
+                              {% else %}
                               <h4>{{vehicle.license_plate}}</h4>
-                              <div class="info">
+                              {% endif %}                           
+                                 <div class="info">
 
                                 <span class="work-post"><a href="#"><i data-feather="check-square"></i>{{vehicle.colour}}</a></span>
 
