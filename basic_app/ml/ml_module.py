@@ -1,3 +1,4 @@
+from datetime import time
 from basic_app.models import Video, Job, VehicleRecord
 from pathlib import Path
 import uuid
@@ -215,8 +216,15 @@ def vehicle_detect(username, job_code):
         y=(y1+y2)/2
         y=max(y1,y2)
         if(y>500 and y<700):
+          #section for extracting timestamp
+          path_string = image_path[-7:]
+          if path_string[0] == 'e':
+            timestamp = path_string[1:3]
+          else:
+            timestamp = path_string[2]
+          #end section
           d=c[y1:y2, x1:x2]
-          name = './framesimages/{}/{}/extracted{}.jpg'.format(username, job_code, str(j))
+          name = './framesimages/{}/{}/extracted{}.jpg'.format(username, job_code, timestamp)
           j=j+1
           cv2.imwrite(name, cv2.cvtColor(d, cv2.COLOR_RGB2BGR))
           
@@ -522,7 +530,16 @@ def attribute_extract(path, username, job_code):
       ans.append(vehicle_license_plate(extracted_image_paths[i],wpod_net,reader,recognition_model, characterlabels))
       ans.append(vehicle_color(extracted_image_paths[i]))
       ans.append(vehicle_type(extracted_image_paths[i],model,labels))
-      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model="nil", vehicle_logo="nil")      
+      #timestamp section
+      path_string = extracted_image_paths[i][-7:]
+      if path_string[0] == 'e':
+        timestamp = path_string[2]
+      else:
+        timestamp = path_string[1:3]
+      #section end
+      #                                                                                        this field is used for timestamp
+      ans.append(timestamp)
+      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=timestamp, vehicle_logo="nil")      
       imageopen = open("{}".format(extracted_image_paths[i]), "rb")
       imagefile = File(imageopen)
       record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
