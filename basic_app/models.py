@@ -30,7 +30,7 @@ class VehicleRecord(models.Model):
     license_plate = CharField(blank=True, null=True, max_length=100)
     colour = CharField(blank=True, null=True, max_length=100)
     vehicle_type = CharField(blank=True, null=True, max_length=100)
-    vehicle_model = CharField(blank=True, null=True, max_length=100)
+    vehicle_model = CharField(blank=True, null=True, max_length=100) #used for timestamp
     vehicle_logo = CharField(blank=True, null=True, max_length=100)
 
 
