@@ -537,9 +537,31 @@ def attribute_extract(path, username, job_code):
       else:
         timestamp = path_string[1:3]
       #section end
+      if int(timestamp) < 60:
+        if int(timestamp)<10:
+          formatted_timestamp = "00:00:0{}".format(timestamp)
+        else:
+          formatted_timestamp = "00:00:{}".format(timestamp)
+      elif int(timestamp) < 3600:
+          mod = timestamp%60
+          mins = timestamp/60
+          if int(mins)<10:
+            if int(mod)<10:
+              formatted_timestamp = "00:0{}:0{}".format(mins, mod)
+            else:
+              formatted_timestamp = "00:0{}:{}".format(mod)
+          else:
+            if int(mod)<10:
+              formatted_timestamp = "00:0{}:0{}".format(mins, mod)
+            else:
+              formatted_timestamp = "00:0{}:{}".format(mod)
+      else:
+        pass #hours no needed        
+        
+
       #                                                                                        this field is used for timestamp
-      ans.append(timestamp)
-      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=timestamp, vehicle_logo="nil")      
+      ans.append(formatted_timestamp)
+      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=formatted_timestamp, vehicle_logo="nil")      
       imageopen = open("{}".format(extracted_image_paths[i]), "rb")
       imagefile = File(imageopen)
       record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
