@@ -362,7 +362,7 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
       thresh = cv2.bitwise_not(thresh)
       plate= imutils.resize(plate, width=400)
       thresh = imutils.resize(thresh, width=400)
-      labels = measure.label(thresh, neighbors=8, background=0)
+      labels = measure.label(thresh, background=0)
       charCandidates = np.zeros(thresh.shape, dtype="uint8")
       crop_characters=[]
       x_cor=[]
