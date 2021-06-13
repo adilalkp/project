@@ -103,7 +103,11 @@
                     {% for rec in records %}
                     <tr>
                       <td>{{forloop.counter}}</td>
-                      <td>{{rec.license_plate}}</td>
+                      {% if rec.license_plate == '0' %}
+                      <td> Not Detected </td>
+                      {% else %}
+                      <td> {{rec.license_plate}} </td>
+                      {% endif %}
                       <td>{{rec.colour}}</td>
                       <td>{{rec.vehicle_type}}</td>
                     </tr>
