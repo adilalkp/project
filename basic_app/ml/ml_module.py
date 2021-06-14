@@ -118,7 +118,7 @@ def vehicle_detect(username, job_code):
     model_dir = BASE_DIR / '{}/saved_model'.format(model_name)
     model = tf.saved_model.load(str(model_dir))
     return model
-  lablpath = 'object_detection/data/mscoco_label_map.pbtxt'
+  labelpath = 'object_detection/data/mscoco_label_map.pbtxt'
   category_index = label_map_util.create_category_index_from_labelmap(labelpath, use_display_name=True)
   imgpath= glob.glob("framesimages/{}/{}/frame*.jpg".format(username, job_code))
 
@@ -264,16 +264,16 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
           blurimg = cv2.GaussianBlur(grayimage,(5,5),0)
           binaryimg = cv2.threshold(blurimg, 180, 255,cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
           kernel3 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-          thresh = cv2.morphologyEx(binary, cv2.MORPH_DILATE, kernel3)
-          cont, _  = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-          testroi = plate_image.copy()
+          thresh = cv2.morphologyEx(binaryimg, cv2.MORPH_DILATE, kernel3)
+          cont, _  = cv2.findContours(binaryimg, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+          testroi = plateimage.copy()
           crop_characters = []
           digit_w, digit_h = 30, 60
           for c in sort_contours(cont):
             (x, y, w, h) = cv2.boundingRect(c)
             ratio = h/w
             if 1<=ratio<=3.5:
-                if h/plate_image.shape[0]>=0.5:
+                if h/plateimage.shape[0]>=0.5:
                     cv2.rectangle(testroi, (x, y), (x + w, y + h), (0, 255,0), 2)
                     curr_num = thresh[y:y+h,x:x+w]
                     curr_num = cv2.resize(curr_num, dsize=(digit_w, digit_h))
@@ -337,12 +337,12 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
           (x, y, w, h) = cv2.boundingRect(c)
           aspectRatio = w / float(h)
           solidity = cv2.contourArea(c) / float(w * h)
-          heightRatio = h / float(plate.shape[0])
+          heightRatio = h / float(plateimg.shape[0])
           keepAspectRatio = aspectRatio < 1.0
           keepSolidity = solidity > 0.15
           keepHeight = heightRatio > 0.4 and heightRatio < 0.95
           if keepAspectRatio and keepSolidity and keepHeight:
-            cv2.rectangle(plate, (x, y), (x + w, y + h), (0, 255,0), 2)
+            cv2.rectangle(plateimg, (x, y), (x + w, y + h), (0, 255,0), 2)
             curr_num = thresh[y:y+h,x:x+w]
             curr_num = cv2.resize(curr_num, dsize=(30, 60))
             _, curr_num = cv2.threshold(curr_num, 220, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
