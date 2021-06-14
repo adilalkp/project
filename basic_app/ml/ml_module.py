@@ -38,16 +38,11 @@ from collections import Counter
 from skimage.color import rgb2lab, deltaE_cie76
 from webcolors import rgb_to_name
 import webcolors
-import cv2
 import easyocr
-import os
-import numpy as np
-import matplotlib.pyplot as plt
 from basic_app.ml.local_utils import detect_lp
 import utils as ut
 from os.path import splitext, basename
 from keras.models import model_from_json
-import glob
 import matplotlib
 from sklearn.preprocessing import LabelEncoder
 from collections import namedtuple
@@ -56,7 +51,6 @@ from skimage import segmentation
 from skimage import measure
 from imutils import perspective
 import imutils
-import os
 from keras.layers import Input
 from keras.models import Model
 from keras.preprocessing.image import img_to_array
@@ -67,7 +61,6 @@ from keras.callbacks import ModelCheckpoint, EarlyStopping
 from keras.models import model_from_json
 from sklearn.preprocessing import LabelEncoder
 import matplotlib.gridspec as gridspec
-# %matplotlib inline
 
 def load_model(path):
       try:
@@ -78,7 +71,7 @@ def load_model(path):
           model.load_weights('%s.h5' % path)
           return model
       except Exception as e:
-          print(e)  
+          print(e)
 
 def loadtypemodel():
   json_file = open(BASE_DIR / 'ml/type_recognition.json', 'r')
@@ -92,9 +85,9 @@ def loadtypemodel():
 
 def frame_extraction(path, username, job_code):
   #Convert input video into frames(1 frame every second)
-    cap = cv2.VideoCapture(path)
+    capture = cv2.VideoCapture(path)
     count = 0
-    cur=0
+    current=0
     try:
         if not os.path.exists('framesimages/{}'.format(username)):
             os.makedirs('framesimages/{}'.format(username))
@@ -102,85 +95,57 @@ def frame_extraction(path, username, job_code):
             os.makedirs('framesimages/{}/{}'.format(username,job_code))
     except OSError as e:
         print (e)
-    while cap.isOpened():
-        ret, frame = cap.read()
+    while capture.isOpened():
+        ret, frame = capture.read()
         if ret:
-            name = './framesimages/{}/{}/frame{}.jpg'.format(username, job_code, str(cur))
+            name = './framesimages/{}/{}/frame{}.jpg'.format(username, job_code, str(current))
             cv2.imwrite(name, frame)
-            cur=cur+1
-            count += 30 # i.e. at 30 fps, this advances one second
-            cap.set(1, count)
+            current=current+1
+            count += 30
+            capture.set(1, count)
         else:
-            cap.release()
+            capture.release()
             break
-    
+
 
 
 # Use Tensorflow Object detection api for Vehicle detection from frames
 def vehicle_detect(username, job_code):
-  # patch tf1 into `utils.ops`
   utils_ops.tf = tf.compat.v1
-
-  # Patch the location of gfile
   tf.gfile = tf.io.gfile
   def load_model(model_name):
     model_file = model_name + '.tar.gz'
     model_dir = BASE_DIR / '{}/saved_model'.format(model_name)
     model = tf.saved_model.load(str(model_dir))
     return model
-
-  # List of the strings that is used to add correct label for each box.
-  PATH_TO_LABELS = 'object_detection/data/mscoco_label_map.pbtxt'
-  category_index = label_map_util.create_category_index_from_labelmap(PATH_TO_LABELS, use_display_name=True)
-
-  TEST_IMAGE_PATHS= glob.glob("framesimages/{}/{}/frame*.jpg".format(username, job_code))
+  lablpath = 'object_detection/data/mscoco_label_map.pbtxt'
+  category_index = label_map_util.create_category_index_from_labelmap(labelpath, use_display_name=True)
+  imgpath= glob.glob("framesimages/{}/{}/frame*.jpg".format(username, job_code))
 
   # Model used for detection is ssd+mobilenet
   model_name = 'ssd_mobilenet_v1_coco_2017_11_17'
   detection_model = load_model('ssd_mobilenet_v1_coco_2017_11_17')
-  #print(detection_model.signatures['serving_default'].inputs)
-  #detection_model.signatures['serving_default'].output_dtypes
-  #detection_model.signatures['serving_default'].output_shapes
-  def run_inference_for_single_image(model, image):
+  def findboundingboxes(model, image):
     image = np.asarray(image)
-    # The input needs to be a tensor, convert it using `tf.convert_to_tensor`.
     input_tensor = tf.convert_to_tensor(image)
-    # The model expects a batch of images, so add an axis with `tf.newaxis`.
     input_tensor = input_tensor[tf.newaxis,...]
-
-    # Run inference
     model_fn = model.signatures['serving_default']
     output_dict = model_fn(input_tensor)
-
-    # All outputs are batches tensors.
-    # Convert to numpy arrays, and take index [0] to remove the batch dimension.
-    # We're only interested in the first num_detections.
     num_detections = int(output_dict.pop('num_detections'))
-    output_dict = {key:value[0, :num_detections].numpy() 
+    output_dict = {key:value[0, :num_detections].numpy()
                   for key,value in output_dict.items()}
     output_dict['num_detections'] = num_detections
-
-    # detection_classes should be ints.
     output_dict['detection_classes'] = output_dict['detection_classes'].astype(np.int64)
-    
-    # Handle models with masks:
     if 'detection_masks' in output_dict:
-      # Reframe the the bbox mask to the image size.
       detection_masks_reframed = utils_ops.reframe_box_masks_to_image_masks(
                 output_dict['detection_masks'], output_dict['detection_boxes'],
-                image.shape[0], image.shape[1])      
-      detection_masks_reframed = tf.cast(detection_masks_reframed > 0.5,
-                                        tf.uint8)
+                image.shape[0], image.shape[1])
+      detection_masks_reframed = tf.cast(detection_masks_reframed > 0.5,tf.uint8)
       output_dict['detection_masks_reframed'] = detection_masks_reframed.numpy()
-      
     return output_dict
-  def show_inference(model, image_path,j, username, job_code):
-    # the array based representation of the image will be used later in order to prepare the
-    # result image with boxes and labels on it.
+  def extractvehicleregion(model, image_path,j, username, job_code):
     image_np = np.array(Image.open(image_path))
-    # Actual detection.
-    output_dict = run_inference_for_single_image(model, image_np)
-    # Visualization of the results of a detection.
+    output_dict = findboundingboxes(model, image_np)
     vis_util.visualize_boxes_and_labels_on_image_array(
         image_np,
         output_dict['detection_boxes'],
@@ -190,30 +155,19 @@ def vehicle_detect(username, job_code):
         instance_masks=output_dict.get('detection_masks_reframed', None),
         use_normalized_coordinates=True,
         line_thickness=8)
-    #print(output_dict)
-
-    #display(Image.fromarray(image_np))
     imgs=Image.fromarray(image_np)
-    #cv2.line(str(image_path), (0, 600),(1080,600),(100, 255, 255),5)
     imginput = cv2.imread(image_path)
     img= cv2.cvtColor(imginput, cv2.COLOR_BGR2RGB)
     cv2.line(img, (0, 600),(1500,600),5)
-    #display(Image.fromarray(img))
-
-  
     (w,h)=imgs.size
-    
     checkclass=[2,3,4,6,8]
     for i in range(len(output_dict['detection_classes'])):
-      if(output_dict['detection_classes'][i] in checkclass and output_dict['detection_scores'][i]>0.5): 
-        
+      if(output_dict['detection_classes'][i] in checkclass and output_dict['detection_scores'][i]>0.5):
         c=np.array(Image.open(image_path))
         x1=int(output_dict['detection_boxes'][i][1]*w)
         y1=int(output_dict['detection_boxes'][i][0]*h)
         x2=int(output_dict['detection_boxes'][i][3]*w)
         y2=int(output_dict['detection_boxes'][i][2]*h)
-        x=(x1+x2)/2
-        y=(y1+y2)/2
         y=max(y1,y2)
         if(y>500 and y<700):
           #section for extracting timestamp
@@ -227,17 +181,15 @@ def vehicle_detect(username, job_code):
           name = './framesimages/{}/{}/extracted{}.jpg'.format(username, job_code, timestamp)
           j=j+1
           cv2.imwrite(name, cv2.cvtColor(d, cv2.COLOR_RGB2BGR))
-          
-        #print(x1,x2,y1,y2) 
-    return j 
+    return j
   j=0
-  for image_path in TEST_IMAGE_PATHS:
-    ans=show_inference(detection_model, image_path,j, username, job_code)
+  for image_path in imgpath:
+    ans=extractvehicleregion(detection_model, image_path,j, username, job_code)
     j=ans
 
 
 
-def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):  
+def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
     def get_plate(wpod_net, image_path, Dmax=608, Dmin=280):
         vehicle = preprocess_image(image_path)
         ratio = float(max(vehicle.shape[:2])) / min(vehicle.shape[:2])
@@ -263,34 +215,6 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
         if ln*h/rect>regthresh:
           plate.append(result[1])
       return plate
-
-    def order_points(pts):
-      rect = np.zeros((4, 2), dtype = "float32")
-      s = pts.sum(axis = 1)
-      rect[0] = pts[np.argmin(s)]
-      rect[2] = pts[np.argmax(s)]
-      diff = np.diff(pts, axis = 1)
-      rect[1] = pts[np.argmin(diff)]
-      rect[3] = pts[np.argmax(diff)]
-      return rect
-
-    def four_point_transform(image, pts):
-      rect = order_points(pts)
-      (tl, tr, br, bl) = rect
-      widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
-      widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
-      maxWidth = max(int(widthA), int(widthB))
-      heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
-      heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
-      maxHeight = max(int(heightA), int(heightB))
-      dst = np.array([
-        [0, 0],
-        [maxWidth - 1, 0],
-        [maxWidth - 1, maxHeight - 1],
-        [0, maxHeight - 1]], dtype = "float32")
-      M = cv2.getPerspectiveTransform(rect, dst)
-      warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
-      return warped
 
     def ocrrecognition(img,reader):
       regthresh=0.7
@@ -335,15 +259,14 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
         return cnts
 
     def segm(img):
-          plate_image = cv2.convertScaleAbs(img, alpha=(255.0))
-          gray = cv2.cvtColor(plate_image, cv2.COLOR_BGR2GRAY)
-          blur = cv2.GaussianBlur(gray,(5,5),0)
-          binary = cv2.threshold(blur, 180, 255,
-                              cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
+          plateimage = cv2.convertScaleAbs(img, alpha=(255.0))
+          grayimage = cv2.cvtColor(plateimage, cv2.COLOR_BGR2GRAY)
+          blurimg = cv2.GaussianBlur(grayimage,(5,5),0)
+          binaryimg = cv2.threshold(blurimg, 180, 255,cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)[1]
           kernel3 = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
-          thre_mor = cv2.morphologyEx(binary, cv2.MORPH_DILATE, kernel3)
+          thresh = cv2.morphologyEx(binary, cv2.MORPH_DILATE, kernel3)
           cont, _  = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-          test_roi = plate_image.copy()
+          testroi = plate_image.copy()
           crop_characters = []
           digit_w, digit_h = 30, 60
           for c in sort_contours(cont):
@@ -351,8 +274,8 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
             ratio = h/w
             if 1<=ratio<=3.5:
                 if h/plate_image.shape[0]>=0.5:
-                    cv2.rectangle(test_roi, (x, y), (x + w, y + h), (0, 255,0), 2)
-                    curr_num = thre_mor[y:y+h,x:x+w]
+                    cv2.rectangle(testroi, (x, y), (x + w, y + h), (0, 255,0), 2)
+                    curr_num = thresh[y:y+h,x:x+w]
                     curr_num = cv2.resize(curr_num, dsize=(digit_w, digit_h))
                     _, curr_num = cv2.threshold(curr_num, 220, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
                     crop_characters.append(curr_num)
@@ -362,13 +285,41 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
                 final_string+=title.strip("'[]")
           return final_string
 
-    def detectCharacterCandidates(image,region):
-      plate=four_point_transform(image,region)
-      V = cv2.split(cv2.cvtColor(plate, cv2.COLOR_BGR2HSV))[2]
+    def order_points(pts):
+      rect = np.zeros((4, 2), dtype = "float32")
+      s = pts.sum(axis = 1)
+      rect[0] = pts[np.argmin(s)]
+      rect[2] = pts[np.argmax(s)]
+      diff = np.diff(pts, axis = 1)
+      rect[1] = pts[np.argmin(diff)]
+      rect[3] = pts[np.argmax(diff)]
+      return rect
+
+    def four_point_transform(image, pts):
+      rect = order_points(pts)
+      (tl, tr, br, bl) = rect
+      widthA = np.sqrt(((br[0] - bl[0]) ** 2) + ((br[1] - bl[1]) ** 2))
+      widthB = np.sqrt(((tr[0] - tl[0]) ** 2) + ((tr[1] - tl[1]) ** 2))
+      maxWidth = max(int(widthA), int(widthB))
+      heightA = np.sqrt(((tr[0] - br[0]) ** 2) + ((tr[1] - br[1]) ** 2))
+      heightB = np.sqrt(((tl[0] - bl[0]) ** 2) + ((tl[1] - bl[1]) ** 2))
+      maxHeight = max(int(heightA), int(heightB))
+      dst = np.array([
+        [0, 0],
+        [maxWidth - 1, 0],
+        [maxWidth - 1, maxHeight - 1],
+        [0, maxHeight - 1]], dtype = "float32")
+      M = cv2.getPerspectiveTransform(rect, dst)
+      warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight))
+      return warped
+
+    def Characterdetect(image,region):
+      plateimg=four_point_transform(image,region)
+      V = cv2.split(cv2.cvtColor(plateimg, cv2.COLOR_BGR2HSV))[2]
       T = threshold_local(V, 29, offset=15, method="gaussian")
       thresh = (V > T).astype("uint8") * 255
       thresh = cv2.bitwise_not(thresh)
-      plate= imutils.resize(plate, width=400)
+      plateimg= imutils.resize(plateimg, width=400)
       thresh = imutils.resize(thresh, width=400)
       labels = measure.label(thresh, background=0)
       charCandidates = np.zeros(thresh.shape, dtype="uint8")
@@ -390,7 +341,6 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
           keepAspectRatio = aspectRatio < 1.0
           keepSolidity = solidity > 0.15
           keepHeight = heightRatio > 0.4 and heightRatio < 0.95
-
           if keepAspectRatio and keepSolidity and keepHeight:
             cv2.rectangle(plate, (x, y), (x + w, y + h), (0, 255,0), 2)
             curr_num = thresh[y:y+h,x:x+w]
@@ -398,8 +348,6 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
             _, curr_num = cv2.threshold(curr_num, 220, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
             crop_characters.insert(i,curr_num)
             x_cor.insert(i,x)
-            hull = cv2.convexHull(c)
-            cv2.drawContours(charCandidates, [hull], -1, 255, -1)
             i=i+1
       charCandidates = segmentation.clear_border(charCandidates)
       return (charCandidates,crop_characters,x_cor)
@@ -407,7 +355,7 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
     def segm2(impath,pts):
         crop_c=[]
         x_c=[]
-        char_c,crop_c,x_c=detectCharacterCandidates(cv2.imread(impath),pts)
+        char_c,crop_c,x_c=Characterdetect(cv2.imread(impath),pts)
         d=sort_function(crop_c,x_c)
         final_string = ''
         for i,character in enumerate(d):
@@ -467,17 +415,17 @@ def vehicle_color(impath):
       return closest_name
 
   def get_colors(image, number_of_colors, show_chart):
-      
+
       modified_image = cv2.resize(image, (600, 400), interpolation = cv2.INTER_AREA)
       modified_image = modified_image.reshape(modified_image.shape[0]*modified_image.shape[1], 3)
-      
+
       clf = KMeans(n_clusters = number_of_colors)
       labels = clf.fit_predict(modified_image)
-      
+
       counts = Counter(labels)
       # sort to ensure correct color percentage
       counts = dict(sorted(counts.items()))
-      
+
       center_colors = clf.cluster_centers_
       # We get ordered colors by iterating through the keys
       ordered_colors = [center_colors[i] for i in counts.keys()]
@@ -495,7 +443,7 @@ def vehicle_color(impath):
   colour_recognized = get_colour_name(cp)
   return colour_recognized
 
-# The model to recognise the type of the detected vehicle. The model used is mobilenet V2. 
+# The model to recognise the type of the detected vehicle. The model used is mobilenet V2.
 def vehicle_type(impath,model,labels):
   def predict_from_model(image,model,labels):
       image = cv2.resize(image,(80,80))
@@ -556,12 +504,12 @@ def attribute_extract(path, username, job_code):
             else:
               formatted_timestamp = "00:0{}:{}".format(mod)
       else:
-        pass #hours no needed        
-        
+        pass #hours no needed
+
 
       #                                                                                        this field is used for timestamp
       ans.append(formatted_timestamp)
-      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=formatted_timestamp, vehicle_logo="nil")      
+      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=formatted_timestamp, vehicle_logo="nil")
       imageopen = open("{}".format(extracted_image_paths[i]), "rb")
       imagefile = File(imageopen)
       record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
