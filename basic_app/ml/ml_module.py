@@ -464,7 +464,7 @@ def attribute_extract(path, username, job_code):
   loaded_model_json = json_file.read()
   json_file.close()
   recognition_model = model_from_json(loaded_model_json)
-  recognition_model.load_weights(BASE_DIR / "ml/model_char_recognitionorgnew")
+  recognition_model.load_weights(BASE_DIR / "ml/model_char_recognitionorgnew.h5")
   characterlabels = LabelEncoder()
   characterlabels.classes_ = np.load(BASE_DIR / 'ml/license_character_classes.npy')
   model,labels=loadtypemodel()
