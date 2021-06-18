@@ -169,7 +169,7 @@ def vehicle_detect(username, job_code):
         x2=int(output_dict['detection_boxes'][i][3]*w)
         y2=int(output_dict['detection_boxes'][i][2]*h)
         y=max(y1,y2)
-        if(y>500 and y<700):
+        if(y>(0.5*h) and y<(0.7*h)):
           #section for extracting timestamp
           path_string = image_path[-7:]
           if path_string[0] == 'e':
@@ -338,10 +338,7 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
           aspectRatio = w / float(h)
           solidity = cv2.contourArea(c) / float(w * h)
           heightRatio = h / float(plateimg.shape[0])
-          keepAspectRatio = aspectRatio < 1.0
-          keepSolidity = solidity > 0.15
-          keepHeight = heightRatio > 0.4 and heightRatio < 0.95
-          if keepAspectRatio and keepSolidity and keepHeight:
+          if aspectRatio<1.0 and solidity>0.15 and heightRatio>0.4 and heightRatio<0.95:
             cv2.rectangle(plateimg, (x, y), (x + w, y + h), (0, 255,0), 2)
             curr_num = thresh[y:y+h,x:x+w]
             curr_num = cv2.resize(curr_num, dsize=(30, 60))
@@ -462,11 +459,11 @@ def attribute_extract(path, username, job_code):
   vehicle_detect(username, job_code)
   wpod_net_path = BASE_DIR / "ml/wpod-net.json"
   wpod_net = load_model(wpod_net_path)
-  json_file = open(BASE_DIR / 'ml/MobileNets_character_recognition.json', 'r')
+  json_file = open(BASE_DIR / 'ml/model_char_recognitionorgnew.json', 'r')
   loaded_model_json = json_file.read()
   json_file.close()
   recognition_model = model_from_json(loaded_model_json)
-  recognition_model.load_weights(BASE_DIR / "ml/recognition.h5")
+  recognition_model.load_weights(BASE_DIR / "ml/model_char_recognitionorgnew")
   characterlabels = LabelEncoder()
   characterlabels.classes_ = np.load(BASE_DIR / 'ml/license_character_classes.npy')
   model,labels=loadtypemodel()
