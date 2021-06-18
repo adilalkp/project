@@ -372,9 +372,10 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
       plates.append(segm2(impath,np.array(pts)))
       plates.append(ocrrecognition(LpImg[0],reader))
       plates.sort(key=len)
-
-      if len(plates[1])>7:
-        return plates[1]
+      if len(plates[0])>7:
+        return plates[0]
+      elif len(plates[1]>7):
+          return plates[1]
       else:
         return plates[2]
     except Exception as e:
