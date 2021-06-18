@@ -504,7 +504,7 @@ def attribute_extract(path, username, job_code):
         pass #hours no needed
 
 
-      #                                                                                        this field is used for timestamp
+      #this field is used for timestamp
       ans.append(formatted_timestamp)
       record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=formatted_timestamp, vehicle_logo="nil")
       imageopen = open("{}".format(extracted_image_paths[i]), "rb")
