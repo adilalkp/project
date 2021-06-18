@@ -374,7 +374,7 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
       plates.sort(key=len)
       if len(plates[0])>7:
         return plates[0]
-      elif len(plates[1]>7):
+      elif len(plates[1])>7:
           return plates[1]
       else:
         return plates[2]
