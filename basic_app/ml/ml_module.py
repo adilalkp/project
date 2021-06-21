@@ -101,7 +101,7 @@ def frame_extraction(path, username, job_code):
             name = './framesimages/{}/{}/frame{}.jpg'.format(username, job_code, str(current))
             cv2.imwrite(name, frame)
             current=current+1
-            count += 30
+            count += 20
             capture.set(1, count)
         else:
             capture.release()
@@ -162,14 +162,14 @@ def vehicle_detect(username, job_code):
     (w,h)=imgs.size
     checkclass=[2,3,4,6,8]
     for i in range(len(output_dict['detection_classes'])):
-      if(output_dict['detection_classes'][i] in checkclass and output_dict['detection_scores'][i]>0.5):
+      if(output_dict['detection_classes'][i] in checkclass and output_dict['detection_scores'][i]>0.55):
         c=np.array(Image.open(image_path))
         x1=int(output_dict['detection_boxes'][i][1]*w)
         y1=int(output_dict['detection_boxes'][i][0]*h)
         x2=int(output_dict['detection_boxes'][i][3]*w)
         y2=int(output_dict['detection_boxes'][i][2]*h)
         y=max(y1,y2)
-        if(y>(0.5*h) and y<(0.7*h)):
+        if(y>(0.8*h) and y<(0.98*h)):
           #section for extracting timestamp
           path_string = image_path[-7:]
           if path_string[0] == 'e':
@@ -371,13 +371,15 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
       plates.append(segm(LpImg[0]))
       plates.append(segm2(impath,np.array(pts)))
       plates.append(ocrrecognition(LpImg[0],reader))
-      plates.sort(key=len)
-      if len(plates[0])>7:
+      if len(plates[0])>6 and plates[0].startswith('KL'):
         return plates[0]
-      elif len(plates[1])>7:
+      elif len(plates[1])>6:
           return plates[1]
+      elif len(plates[2])>6:
+          return plates[2]
       else:
-        return plates[2]
+          return 0
+
     except Exception as e:
       print(e)
       return 0
@@ -476,42 +478,45 @@ def attribute_extract(path, username, job_code):
       ans.append(vehicle_license_plate(extracted_image_paths[i],wpod_net,reader,recognition_model, characterlabels))
       ans.append(vehicle_color(extracted_image_paths[i]))
       ans.append(vehicle_type(extracted_image_paths[i],model,labels))
+      if ans[1]==0 and ans[3]=='Car':
+          continue
+      else:
       #timestamp section
-      path_string = extracted_image_paths[i][-7:]
-      if path_string[0] == 'e':
-        timestamp = path_string[2]
-      else:
-        timestamp = path_string[1:3]
-      #section end
-      if int(timestamp) < 60:
-        if int(timestamp)<10:
-          formatted_timestamp = "00:00:0{}".format(timestamp)
-        else:
-          formatted_timestamp = "00:00:{}".format(timestamp)
-      elif int(timestamp) < 3600:
-          mod = timestamp%60
-          mins = timestamp/60
-          if int(mins)<10:
-            if int(mod)<10:
-              formatted_timestamp = "00:0{}:0{}".format(mins, mod)
-            else:
-              formatted_timestamp = "00:0{}:{}".format(mod)
+          path_string = extracted_image_paths[i][-7:]
+          if path_string[0] == 'e':
+            timestamp = path_string[2]
           else:
-            if int(mod)<10:
-              formatted_timestamp = "00:0{}:0{}".format(mins, mod)
+            timestamp = path_string[1:3]
+          #section end
+          if int(timestamp) < 60:
+            if int(timestamp)<10:
+              formatted_timestamp = "00:00:0{}".format(timestamp)
             else:
-              formatted_timestamp = "00:0{}:{}".format(mod)
-      else:
-        pass #hours no needed
+              formatted_timestamp = "00:00:{}".format(timestamp)
+          elif int(timestamp) < 3600:
+              mod = timestamp%60
+              mins = timestamp/60
+              if int(mins)<10:
+                if int(mod)<10:
+                  formatted_timestamp = "00:0{}:0{}".format(mins, mod)
+                else:
+                  formatted_timestamp = "00:0{}:{}".format(mod)
+              else:
+                if int(mod)<10:
+                  formatted_timestamp = "00:0{}:0{}".format(mins, mod)
+                else:
+                  formatted_timestamp = "00:0{}:{}".format(mod)
+          else:
+            pass #hours no needed
 
 
-      #this field is used for timestamp
-      ans.append(formatted_timestamp)
-      record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=formatted_timestamp, vehicle_logo="nil")
-      imageopen = open("{}".format(extracted_image_paths[i]), "rb")
-      imagefile = File(imageopen)
-      record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
-      finalans.append(ans)
+          #this field is used for timestamp
+          ans.append(formatted_timestamp)
+          record = VehicleRecord(job_code=job_code, license_plate=ans[1], colour=ans[2], vehicle_type=ans[3], vehicle_model=formatted_timestamp, vehicle_logo="nil")
+          imageopen = open("{}".format(extracted_image_paths[i]), "rb")
+          imagefile = File(imageopen)
+          record.image.save("{}-{}-{}.jpg".format(username, job_code, i), imagefile, save=True)
+          finalans.append(ans)
   return finalans
 
 
