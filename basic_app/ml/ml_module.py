@@ -484,9 +484,9 @@ def attribute_extract(path, username, job_code):
       #timestamp section
           path_string = extracted_image_paths[i][-7:]
           if path_string[0] == 'e':
-            timestamp = path_string[2]
+            timestamp = int(path_string[2])*2//3
           else:
-            timestamp = path_string[1:3]
+            timestamp = int(path_string[1:3])*2//3
           #section end
           if int(timestamp) < 60:
             if int(timestamp)<10:
@@ -507,7 +507,7 @@ def attribute_extract(path, username, job_code):
                 else:
                   formatted_timestamp = "00:0{}:{}".format(mod)
           else:
-            pass #hours no needed
+            pass #hours not needed
 
 
           #this field is used for timestamp
