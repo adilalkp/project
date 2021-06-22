@@ -361,24 +361,26 @@ def vehicle_license_plate(impath,wpod_net,reader,loaded_model,labels):
         return final_string
 
     try:
-      plates=[]
       LpImg,cor = get_plate(wpod_net, impath)
       pts=[]
       x_coordinates=cor[0][0]
       y_coordinates=cor[0][1]
       for i in range(4):
           pts.append((int(x_coordinates[i]),int(y_coordinates[i])))
-      plates.append(segm(LpImg[0]))
-      plates.append(segm2(impath,np.array(pts)))
-      plates.append(ocrrecognition(LpImg[0],reader))
-      if len(plates[0])>6 and plates[0].startswith('KL'):
-        return plates[0]
-      elif len(plates[1])>6:
-          return plates[1]
-      elif len(plates[2])>6:
-          return plates[2]
+      lp=segm(LpImg[0])
+      if len(lp)>6 and lp.startswith('KL'):
+        return lp
       else:
-          return 0
+        lp=segm2(impath,np.array(pts))
+        if len(lp)>6:
+          return lp
+        else:
+          lp=ocrrecognition(LpImg[0],reader)
+          if len(lp)>6:
+            return lp
+          else:
+            return 0
+
 
     except Exception as e:
       print(e)
