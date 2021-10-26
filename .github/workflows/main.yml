@@ -1,0 +1,24 @@
+name: TEST
+
+on:
+  push:
+    branches: [ master ]
+
+
+  workflow_dispatch:
+
+jobs:
+  job_one:
+    name: tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: secret check
+        uses: appleboy/ssh-action@master
+        with:
+          host: 35.179.74.225
+          username: ubuntu
+          key: ${{ secrets.TEST_SSH }}
+          port: 22
+          script: |
+            echo "connection worked" >> yep.txt
