@@ -16,9 +16,9 @@ jobs:
       - name: Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: 35.179.74.225
+          host: 54.198.167.77
           username: ubuntu
           key: ${{ secrets.TEST_SSH }}
           port: 22
           script: |
-            echo "connection worked" >> yep.txt
+            echo "connection worked"
