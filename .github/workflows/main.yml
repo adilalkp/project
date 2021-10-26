@@ -17,7 +17,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 35.179.74.225
-          username: ubuntu
+          username: ec2-user
           key: ${{ secrets.TEST_SSH }}
           port: 22
           script: |
